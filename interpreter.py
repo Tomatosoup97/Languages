@@ -16,30 +16,45 @@ class Token(object):
 class Interpreter(object):
     def __init__(self, text):
         self.text = text
-        self.pos = 0
+        self.position = 0
         self.current_token = None
+        self.current_char = self.text[self.position]
 
     def error(self):
         raise Exception('Error parsing input')
 
+    def next(self):
+        self.position += 1
+        if self.position > len(self.text) - 1:
+            self.current_char = None
+        else:
+            self.current_char = self.text[self.position]
+
+    def skip_whitespace(self):
+        while self.current_char.isspace():
+            self.next()
+
     def get_next_token(self):
-        """ Lexical anaylzer (a.k.a scanner or tokenizer) """
-        text = self.text
-        if self.pos > len(text) -1:
-            return Token(EOF, None)
+        """ Lexical anaylzer (tokenizer) """
+        while self.current_char is not None:
+            self.skip_whitespace()
 
-        current_char = text[self.pos]
-        if current_char.isdigit():
-            token = Token(INTEGER, int(current_char))
-            self.pos += 1
-            return token
+            if self.current_char.isdigit():
+                token = Token(INTEGER, int(self.current_char))
+                self.next()
+                return token
 
-        if current_char == '+':
-            token = Token(PLUS, current_char)
-            self.pos += 1
-            return token
+            if self.current_char == '+':
+                self.next()
+                return Token(PLUS, '+')
 
-        self.error()
+            if self.current_char == '-':
+                self.next()
+                return Token(MINUS, '-')
+
+            self.error()
+
+        return Token(EOF, None)
 
     def consume(self, token_type):
         """
@@ -70,7 +85,10 @@ class Interpreter(object):
         right = self.current_token
         self.consume(INTEGER)
 
-        result = left.value + right.value
+        if operator.type == PLUS:
+            result = left.value + right.value
+        else:
+            result  = left.value - right.value
         return result
 
 def main():
