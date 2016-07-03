@@ -8,7 +8,7 @@ class Token(object):
     def __str__(self):
         return 'Token({type}, {value})'.format(
             type=self.type,
-            value=str(self.value))
+            value=repr(self.value))
 
     def __repr__(self):
         return self.__str__()
@@ -24,6 +24,7 @@ class Interpreter(object):
         raise Exception('Error parsing input')
 
     def next(self):
+        """ Set pointer to next character """
         self.position += 1
         if self.position > len(self.text) - 1:
             self.current_char = None
@@ -31,8 +32,18 @@ class Interpreter(object):
             self.current_char = self.text[self.position]
 
     def skip_whitespace(self):
-        while self.current_char.isspace():
+        while self.current_char is not None and \
+                 self.current_char.isspace():
             self.next()
+
+    def integer(self):
+        """ Return integer from the input """
+        result = ''
+        while self.current_char is not None and \
+                self.current_char.isdigit():
+            result += self.current_char
+            self.next()
+        return int(result)
 
     def get_next_token(self):
         """ Lexical anaylzer (tokenizer) """
@@ -40,9 +51,7 @@ class Interpreter(object):
             self.skip_whitespace()
 
             if self.current_char.isdigit():
-                token = Token(INTEGER, int(self.current_char))
-                self.next()
-                return token
+                return Token(INTEGER, self.integer())
 
             if self.current_char == '+':
                 self.next()
@@ -68,13 +77,14 @@ class Interpreter(object):
             self.error()
 
     def expr(self):
+        """ Parser """
         self.current_token = self.get_next_token()
         
         # expected left character
         left = self.current_token
         self.consume(INTEGER)
 
-        # expected operator
+        # operator
         operator = self.current_token
         if operator.type == PLUS:
             self.consume(PLUS)
@@ -87,7 +97,7 @@ class Interpreter(object):
 
         if operator.type == PLUS:
             result = left.value + right.value
-        else:
+        elif operator.type == MINUS:
             result  = left.value - right.value
         return result
 
