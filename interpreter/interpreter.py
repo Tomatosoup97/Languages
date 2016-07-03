@@ -1,4 +1,6 @@
-INTEGER, PLUS, MINUS, EOF = 'INTEGER', 'PLUS', 'MINUS', 'EOF'
+INTEGER = 'INTEGER'
+PLUS, MINUS, MULTIPLICATION, DIVISION = 'PLUS', 'MINUS', 'MULTIPLICATION', 'DIVISION'
+EOF = 'EOF'
 
 class Token(object):
     def __init__(self, type, value):
@@ -61,6 +63,14 @@ class Interpreter(object):
                 self.next()
                 return Token(MINUS, '-')
 
+            if self.current_char == '*':
+                self.next()
+                return Token(MULTIPLICATION, '*')
+
+            if self.current_char == '/':
+                self.next()
+                return Token(DIVISION, '/')
+
             self.error()
 
         return Token(EOF, None)
@@ -77,28 +87,41 @@ class Interpreter(object):
             self.error()
 
     def expr(self):
-        """ Parser """
+        """ Parser and interpreter """
         self.current_token = self.get_next_token()
         
         # expected left character
         left = self.current_token
         self.consume(INTEGER)
+        result = left.value
 
-        # operator
-        operator = self.current_token
-        if operator.type == PLUS:
-            self.consume(PLUS)
-        elif operator.type == MINUS:
-            self.consume(MINUS)
+        while self.current_char is not None:
+            # operator
+            operator = self.current_token
+            if operator.type == PLUS:
+                self.consume(PLUS)
+            elif operator.type == MINUS:
+                self.consume(MINUS)
+            elif operator.type == MULTIPLICATION:
+                self.consume(MULTIPLICATION)
+            elif operator.type == DIVISION:
+                self.consume(DIVISION)
 
-        # expected right character
-        right = self.current_token
-        self.consume(INTEGER)
+            # expected right character
+            right = self.current_token
+            self.consume(INTEGER)
 
-        if operator.type == PLUS:
-            result = left.value + right.value
-        elif operator.type == MINUS:
-            result  = left.value - right.value
+            if operator.type == PLUS:
+                result += right.value
+            elif operator.type == MINUS:
+                result  -= right.value
+            elif operator.type == MULTIPLICATION:
+                result *= right.value
+            elif operator.type == DIVISION:
+                if right.value == 0:
+                    raise ZeroDivisionError("You cant divide by zero")
+                result /= right.value
+
         return result
 
 def main():
