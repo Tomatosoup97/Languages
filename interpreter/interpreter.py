@@ -1,6 +1,7 @@
-INTEGER = 'INTEGER'
-PLUS, MINUS, MULTIPLY, DIV = 'PLUS', 'MINUS', 'MULTIPLY', 'DIV'
-EOF = 'EOF'
+# Token types
+INTEGER, PLUS, MINUS, MULTIPLY, DIV, EOF = (
+    'INTEGER', 'PLUS', 'MINUS', 'MULTIPLY', 'DIV', 'EOF'
+)
 
 class Token(object):
     def __init__(self, type, value):
@@ -104,35 +105,48 @@ class Interpreter(object):
             self.error()
 
     def factor(self):
-        """Return token value
-
+        """
         factor : INTEGER
         """
         token = self.current_token
         self.consume(INTEGER)
         return token.value
 
-    def expr(self):
+    def term(self):
         """
-        Parser / Interpreter
+        term : factor ((MULTIPLY | DIV) factor)*
         """
         result = self.factor()
 
-        while self.current_token.type in (PLUS, MINUS, MULTIPLY, DIV):
+        while self.current_token.type in (MULTIPLY, DIV):
+            operator = self.current_token
+            if operator.type == MULTIPLY:
+                self.consume(MULTIPLY)
+                result *= self.factor()
+            if operator.type == DIV:
+                self.consume(DIV)
+                result /= self.factor()
+        
+        return result
+
+    def expr(self):
+        """
+        Parser / Interpreter
+
+        expr     : term ((PLUS | MINUS) term)*
+        term    : factor ((MULTIPLY | DIV) factor)*
+        factor  : INTEGER
+        """
+        result = self.term()
+
+        while self.current_token.type in (PLUS, MINUS):
             operator = self.current_token
             if operator.type == PLUS:
                 self.consume(PLUS)
-                result += self.factor()
+                result += self.term()
             elif operator.type == MINUS:
                 self.consume(MINUS)
-                result -= self.factor()
-            elif operator.type == MULTIPLY:
-                self.consume(MULTIPLY)
-                result *= self.factor()
-            elif operator.type == DIV:
-                self.consume(DIV)
-                result //= self.factor()
-
+                result -= self.term()
         return result
 
 def main():

@@ -58,6 +58,19 @@ class CalculationTestCase(unittest.TestCase):
         interpreter = self.InterpreterFactory('12 / 3')
         self.assertEqual(interpreter.expr(), 4)
 
+    def test_precedence_of_operators(self):
+        interpreter = self.InterpreterFactory('10 + 4 / 2')
+        self.assertEqual(interpreter.expr(), 12)
+
+        interpreter = self.InterpreterFactory('10 + 4 * 2')
+        self.assertEqual(interpreter.expr(), 18)
+
+        interpreter = self.InterpreterFactory('4 * 2 + 10')
+        self.assertEqual(interpreter.expr(), 18)
+
+        interpreter = self.InterpreterFactory('10 + 4 * 2 - 8')
+        self.assertEqual(interpreter.expr(), 10)
+
     def test_whitespace_ommition(self):
         interpreter = self.InterpreterFactory('2 +   3')
         self.assertEqual(interpreter.expr(), 5)
