@@ -1,5 +1,5 @@
 INTEGER = 'INTEGER'
-PLUS, MINUS, MULTIPLICATION, DIVISION = 'PLUS', 'MINUS', 'MULTIPLICATION', 'DIVISION'
+PLUS, MINUS, MULTIPLY, DIV = 'PLUS', 'MINUS', 'MULTIPLY', 'DIV'
 EOF = 'EOF'
 
 class Token(object):
@@ -15,18 +15,19 @@ class Token(object):
     def __repr__(self):
         return self.__str__()
 
-class Interpreter(object):
+class Lexer(object):
     def __init__(self, text):
         self.text = text
         self.position = 0
-        self.current_token = None
         self.current_char = self.text[self.position]
 
     def error(self):
         raise Exception('Error parsing input')
 
     def next(self):
-        """ Set pointer to next character """
+        """
+        Set pointer to next character 
+        """
         self.position += 1
         if self.position > len(self.text) - 1:
             self.current_char = None
@@ -39,7 +40,9 @@ class Interpreter(object):
             self.next()
 
     def integer(self):
-        """ Return integer from the input """
+        """ 
+        Return integer from the input
+        """
         result = ''
         while self.current_char is not None and \
                 self.current_char.isdigit():
@@ -48,9 +51,15 @@ class Interpreter(object):
         return int(result)
 
     def get_next_token(self):
-        """ Lexical anaylzer (tokenizer) """
+        """ 
+        Lexical anaylzer
+        Breaks sentence apart into tokens
+        """
         while self.current_char is not None:
-            self.skip_whitespace()
+
+            if self.current_char.isspace():
+                self.skip_whitespace()
+                continue
 
             if self.current_char.isdigit():
                 return Token(INTEGER, self.integer())
@@ -65,74 +74,77 @@ class Interpreter(object):
 
             if self.current_char == '*':
                 self.next()
-                return Token(MULTIPLICATION, '*')
+                return Token(MULTIPLY, '*')
 
             if self.current_char == '/':
                 self.next()
-                return Token(DIVISION, '/')
+                return Token(DIV, '/')
 
             self.error()
 
         return Token(EOF, None)
 
+class Interpreter(object):
+    def __init__(self, lexer):
+        self.lexer = lexer
+        self.current_token = self.lexer.get_next_token()
+
+    def error(self):
+        raise Exception('Invalid syntax')
+
     def consume(self, token_type):
         """
         If token match with expected token,
         consume current and get next token
-        Otherwise thorw exception
+        Otherwise throw exception
         """
         if self.current_token.type == token_type:
-            self.current_token = self.get_next_token()
+            self.current_token = self.lexer.get_next_token()
         else:
             self.error()
 
-    def expr(self):
-        """ Parser and interpreter """
-        self.current_token = self.get_next_token()
-        
-        # expected left character
-        left = self.current_token
-        self.consume(INTEGER)
-        result = left.value
+    def factor(self):
+        """Return token value
 
-        while self.current_char is not None:
-            # operator
+        factor : INTEGER
+        """
+        token = self.current_token
+        self.consume(INTEGER)
+        return token.value
+
+    def expr(self):
+        """
+        Parser / Interpreter
+        """
+        result = self.factor()
+
+        while self.current_token.type in (PLUS, MINUS, MULTIPLY, DIV):
             operator = self.current_token
             if operator.type == PLUS:
                 self.consume(PLUS)
+                result += self.factor()
             elif operator.type == MINUS:
                 self.consume(MINUS)
-            elif operator.type == MULTIPLICATION:
-                self.consume(MULTIPLICATION)
-            elif operator.type == DIVISION:
-                self.consume(DIVISION)
-
-            # expected right character
-            right = self.current_token
-            self.consume(INTEGER)
-
-            if operator.type == PLUS:
-                result += right.value
-            elif operator.type == MINUS:
-                result  -= right.value
-            elif operator.type == MULTIPLICATION:
-                result *= right.value
-            elif operator.type == DIVISION:
-                if right.value == 0:
-                    raise ZeroDivisionError("You cant divide by zero")
-                result /= right.value
+                result -= self.factor()
+            elif operator.type == MULTIPLY:
+                self.consume(MULTIPLY)
+                result *= self.factor()
+            elif operator.type == DIV:
+                self.consume(DIV)
+                result //= self.factor()
 
         return result
 
 def main():
     while True:
         try:
-            text = input('calc> ')
+            text = input('>>> ')
         except EOFError:
             break
         if not text:
             continue
-        interpreter = Interpreter(text)
+        lexer = Lexer(text)
+        interpreter = Interpreter(lexer)
         result = interpreter.expr()
         print(result)
 
