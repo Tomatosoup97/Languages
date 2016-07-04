@@ -71,6 +71,22 @@ class CalculationTestCase(unittest.TestCase):
         interpreter = self.InterpreterFactory('10 + 4 * 2 - 8')
         self.assertEqual(interpreter.expr(), 10)
 
+    def test_parenthesized_expressions(self):
+        interpreter = self.InterpreterFactory('(10 + 4) / 2')
+        self.assertEqual(interpreter.expr(), 7)
+
+        interpreter = self.InterpreterFactory('(1 + 4) * 2')
+        self.assertEqual(interpreter.expr(), 10)
+        
+        interpreter = self.InterpreterFactory('(2 + 1) * (6 - 2)')
+        self.assertEqual(interpreter.expr(), 12)
+
+        interpreter = self.InterpreterFactory('1 + 3 * ((4 + 2) / 2)')
+        self.assertEqual(interpreter.expr(), 10)
+
+        interpreter = self.InterpreterFactory('7+3 * (10 / (12 / (3+1) - 1))')
+        self.assertEqual(interpreter.expr(), 22)
+
     def test_whitespace_ommition(self):
         interpreter = self.InterpreterFactory('2 +   3')
         self.assertEqual(interpreter.expr(), 5)

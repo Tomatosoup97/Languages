@@ -1,8 +1,10 @@
 # Token types
-INTEGER, PLUS, MINUS, MULTIPLY, DIV, EOF = (
-    'INTEGER', 'PLUS', 'MINUS', 'MULTIPLY', 'DIV', 'EOF'
+INTEGER, LPAREN, RPAREN, EOF = (
+    'INTEGER',  '(', ')', 'EOF',
 )
-
+PLUS, MINUS, MULTIPLY, DIV, = (
+    'PLUS', 'MINUS', 'MULTIPLY', 'DIV',
+)
 class Token(object):
     def __init__(self, type, value):
         self.type = type
@@ -81,6 +83,14 @@ class Lexer(object):
                 self.next()
                 return Token(DIV, '/')
 
+            if self.current_char == '(':
+                self.next()
+                return Token(LPAREN, '(')
+
+            if self.current_char == ')':
+                self.next()
+                return Token(RPAREN, ')')
+
             self.error()
 
         return Token(EOF, None)
@@ -106,11 +116,18 @@ class Interpreter(object):
 
     def factor(self):
         """
-        factor : INTEGER
+        factor : INTEGER | LPAREN expr RPAREN
         """
         token = self.current_token
-        self.consume(INTEGER)
-        return token.value
+        if token.type == INTEGER:
+            self.consume(INTEGER)
+            return token.value
+
+        if token.type == LPAREN:
+            self.consume(LPAREN)
+            result = self.expr()
+            self.consume(RPAREN)
+            return result
 
     def term(self):
         """
@@ -135,7 +152,7 @@ class Interpreter(object):
 
         expr     : term ((PLUS | MINUS) term)*
         term    : factor ((MULTIPLY | DIV) factor)*
-        factor  : INTEGER
+        factor  : INTEGER | LPAREN expr RPAREN
         """
         result = self.term()
 
