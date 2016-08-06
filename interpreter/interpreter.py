@@ -1,10 +1,21 @@
+""" Pascal Interpreter """
+
+#-----------------------------------------------------------------------------
+# 
+#  LEXER
+#
+#-----------------------------------------------------------------------------
+
 # Token types
+#
 INTEGER, LPAREN, RPAREN, EOF = (
     'INTEGER',  '(', ')', 'EOF',
 )
 PLUS, MINUS, MULTIPLY, DIV, = (
     'PLUS', 'MINUS', 'MULTIPLY', 'DIV',
 )
+
+
 class Token(object):
     def __init__(self, type, value):
         self.type = type
@@ -17,6 +28,7 @@ class Token(object):
 
     def __repr__(self):
         return self.__str__()
+
 
 class Lexer(object):
     def __init__(self, text):
@@ -95,7 +107,31 @@ class Lexer(object):
 
         return Token(EOF, None)
 
-class Interpreter(object):
+
+#-----------------------------------------------------------------------------
+# 
+#  PARSER
+#
+#-----------------------------------------------------------------------------
+
+class AST(object):
+    pass
+
+
+class BinOp(AST):
+    def __init__(self, left, operator, right):
+        self.left = left
+        self.token = self.operator = operator
+        self.right = right
+
+
+class Num(AST):
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value
+
+
+class Parser(object):
     def __init__(self, lexer):
         self.lexer = lexer
         self.current_token = self.lexer.get_next_token()
@@ -121,30 +157,29 @@ class Interpreter(object):
         token = self.current_token
         if token.type == INTEGER:
             self.consume(INTEGER)
-            return token.value
+            return Num(token)
 
-        if token.type == LPAREN:
+        elif token.type == LPAREN:
             self.consume(LPAREN)
-            result = self.expr()
+            node = self.expr()
             self.consume(RPAREN)
-            return result
+            return node
 
     def term(self):
         """
         term : factor ((MULTIPLY | DIV) factor)*
         """
-        result = self.factor()
+        node = self.factor()
 
         while self.current_token.type in (MULTIPLY, DIV):
-            operator = self.current_token
-            if operator.type == MULTIPLY:
+            token = self.current_token
+            if token.type == MULTIPLY:
                 self.consume(MULTIPLY)
-                result *= self.factor()
-            if operator.type == DIV:
+            if token.type == DIV:
                 self.consume(DIV)
-                result /= self.factor()
-        
-        return result
+
+            node = BinOp(left=node, operator=token, right=self.factor())
+        return node
 
     def expr(self):
         """
@@ -154,17 +189,59 @@ class Interpreter(object):
         term    : factor ((MULTIPLY | DIV) factor)*
         factor  : INTEGER | LPAREN expr RPAREN
         """
-        result = self.term()
+        node = self.term()
 
         while self.current_token.type in (PLUS, MINUS):
-            operator = self.current_token
-            if operator.type == PLUS:
+            token = self.current_token
+            if token.type == PLUS:
                 self.consume(PLUS)
-                result += self.term()
-            elif operator.type == MINUS:
+            elif token.type == MINUS:
                 self.consume(MINUS)
-                result -= self.term()
-        return result
+
+            node = BinOp(left=node, operator=token, right=self.term())
+        return node
+
+    def parse(self):
+        return self.expr()
+
+
+#-----------------------------------------------------------------------------
+# 
+#  INTERPRETER
+#
+#-----------------------------------------------------------------------------
+
+class NodeVisitor(object):
+    def visit(self, node):
+        method_name = 'visit_' + type(node).__name__
+        visitor = getattr(self, method_name, self.generic_visit)
+        return visitor(node)
+
+    def generic_visit(self, node):
+        raise Exception('No visit_{} method'.format(type(node).__name__))
+
+
+class Interpreter(NodeVisitor):
+    def __init__(self, parser):
+        self.parser = parser
+
+    def visit_BinOp(self, node):
+        op_type = node.operator.type
+        if op_type == PLUS:
+            return self.visit(node.left) + self.visit(node.right)
+        elif op_type == MINUS:
+            return self.visit(node.left) - self.visit(node.right)
+        elif op_type == MULTIPLY:
+            return self.visit(node.left) * self.visit(node.right)
+        elif op_type == DIV:
+            return self.visit(node.left) / self.visit(node.right)
+
+    def visit_Num(self, node):
+        return node.value
+
+    def interpret(self):
+        tree = self.parser.parse()
+        return self.visit(tree)
 
 def main():
     while True:
@@ -175,8 +252,9 @@ def main():
         if not text:
             continue
         lexer = Lexer(text)
-        interpreter = Interpreter(lexer)
-        result = interpreter.expr()
+        parser = Parser(lexer)
+        interpreter = Interpreter(parser)
+        result = interpreter.interpret()
         print(result)
 
 if __name__ == '__main__':
