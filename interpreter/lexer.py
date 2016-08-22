@@ -1,3 +1,4 @@
+from exceptions import NoSuchTokenException
 from tokens import *
 
 
@@ -22,7 +23,7 @@ class Lexer(object):
         self.current_char = self.text[self.position]
 
     def error(self):
-        raise Exception('Error parsing input')
+        raise NoSuchTokenException('Error parsing input')
 
     def next(self):
         """

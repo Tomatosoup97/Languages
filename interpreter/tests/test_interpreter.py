@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import unittest
 
-from factories import InterpreterFactory
+from .factories import InterpreterFactory
 from tokens import *
 
 

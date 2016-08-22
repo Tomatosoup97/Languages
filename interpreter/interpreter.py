@@ -1,10 +1,10 @@
 """ Pascal Interpreter """
 
 
-from tests.factories import InterpreterFactory
-from tokens import *
-from interpreter import Parser
+from exceptions import NoSuchVisitorException
+from parser import Parser
 from lexer import Lexer
+from tokens import *
 
 
 class NodeVisitor(object):
@@ -14,7 +14,8 @@ class NodeVisitor(object):
         return visitor(node)
 
     def generic_visit(self, node):
-        raise Exception('No visit_{} method'.format(type(node).__name__))
+        raise NoSuchVisitorException(
+                'No visit_{} method'.format(type(node).__name__))
 
 
 class Interpreter(NodeVisitor):
@@ -48,7 +49,9 @@ def main():
             break
         if not text:
             continue
-        interpreter = InterpreterFactory(text)
+        lexer = Lexer(text)
+        parser = Parser(lexer)
+        interpreter = Interpreter(parser)
         result = interpreter.interpret()
         print(result)
 

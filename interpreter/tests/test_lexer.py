@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import unittest
 
-from factories import LexerFactory
+from .factories import LexerFactory
 from tokens import *
 
 

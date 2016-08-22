@@ -24,7 +24,7 @@ class Parser(object):
         self.current_token = self.lexer.get_next_token()
 
     def error(self):
-        raise Exception('Invalid syntax')
+        raise SyntaxError('Invalid syntax')
 
     def consume(self, token_type):
         """
