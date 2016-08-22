@@ -39,7 +39,7 @@ class Parser(object):
 
     def factor(self):
         """
-        factor : INTEGER | LPAREN expr RPAREN
+        factor: INTEGER | LPAREN expr RPAREN
         """
         token = self.current_token
         if token.type == INTEGER:
@@ -54,7 +54,7 @@ class Parser(object):
 
     def term(self):
         """
-        term : factor ((MULTIPLY | DIV) factor)*
+        term: factor ((MULTIPLY | DIV) factor)*
         """
         node = self.factor()
 
@@ -70,9 +70,9 @@ class Parser(object):
 
     def expr(self):
         """
-        Parser / Interpreter
+        Parser
 
-        expr     : term ((PLUS | MINUS) term)*
+        expr    : term ((PLUS | MINUS) term)*
         term    : factor ((MULTIPLY | DIV) factor)*
         factor  : INTEGER | LPAREN expr RPAREN
         """

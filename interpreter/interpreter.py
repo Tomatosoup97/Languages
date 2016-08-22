@@ -1,8 +1,9 @@
 """ Pascal Interpreter """
 
 
+from tests.factories import InterpreterFactory
 from tokens import *
-from parser import Parser
+from interpreter import Parser
 from lexer import Lexer
 
 
@@ -47,9 +48,7 @@ def main():
             break
         if not text:
             continue
-        lexer = Lexer(text)
-        parser = Parser(lexer)
-        interpreter = Interpreter(parser)
+        interpreter = InterpreterFactory(text)
         result = interpreter.interpret()
         print(result)
 
