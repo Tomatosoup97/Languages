@@ -1,6 +1,8 @@
 import unittest
 
 from interpreter import Parser, Lexer, Interpreter
+from tokens import *
+
 
 class LexerTestCase(unittest.TestCase):
     def LexerFactory(self, text):
@@ -8,7 +10,6 @@ class LexerTestCase(unittest.TestCase):
         return lexer
 
     def test_integer(self):
-        from interpreter import INTEGER
         value = '123'
         lexer = self.LexerFactory(value)
         token = lexer.get_next_token()
@@ -16,7 +17,6 @@ class LexerTestCase(unittest.TestCase):
         self.assertEqual(token.value, int(value))
 
     def test_multiply(self):
-        from interpreter import MULTIPLY
         value = '*'
         lexer = self.LexerFactory(value)
         token = lexer.get_next_token()
@@ -24,12 +24,12 @@ class LexerTestCase(unittest.TestCase):
         self.assertEqual(token.value, value)
 
     def test_division(self):
-        from interpreter import DIV
         value = '/'
         lexer = self.LexerFactory(value)
         token = lexer.get_next_token()
         self.assertEqual(token.type, DIV)
         self.assertEqual(token.value, value)
+
 
 class CalculationTestCase(unittest.TestCase):
     def InterpreterFactory(self, text):
@@ -95,6 +95,7 @@ class CalculationTestCase(unittest.TestCase):
 
         interpreter = self.InterpreterFactory('  7 +  4 ')
         self.assertEqual(interpreter.interpret(), 11)
+
 
 if __name__ == '__main__':
     unittest.main()
