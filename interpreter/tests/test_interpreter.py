@@ -5,6 +5,22 @@ from .factories import InterpreterFactory
 from tokens import *
 
 
+class TestUnaryOperator(unittest.TestCase):
+    def test_basic(self):
+        interpreter = InterpreterFactory('5 -- 2')
+        self.assertEqual(interpreter.interpret(), 7)
+        interpreter = InterpreterFactory('5 +- 2')
+        self.assertEqual(interpreter.interpret(), 3)
+
+    def test_complex(self):
+        interpreter = InterpreterFactory('5 -+--+- 2')
+        self.assertEqual(interpreter.interpret(), 7)
+
+    def test_in_the_middle(self):
+        interpreter = InterpreterFactory('2 + 5 -- 2 ++ 3')
+        self.assertEqual(interpreter.interpret(), 12)
+
+
 class TestCalculations(unittest.TestCase):
     def test_addition(self):
         interpreter = InterpreterFactory('20 + 4')
