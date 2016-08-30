@@ -1,6 +1,5 @@
 """ Pascal Interpreter """
 
-
 from exceptions import NoSuchVisitorException
 from parser import Parser
 from lexer import Lexer
