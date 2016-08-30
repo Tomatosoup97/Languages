@@ -1,6 +1,5 @@
 """ Pascal Interpreter """
 
-from exceptions import NoSuchVisitorException
 from parser import Parser
 from lexer import Lexer
 from tokens import *
@@ -13,7 +12,7 @@ class NodeVisitor(object):
         return visitor(node)
 
     def generic_visit(self, node):
-        raise NoSuchVisitorException(
+        raise Exception(
                 'No visit_{} method'.format(type(node).__name__))
 
 
@@ -31,6 +30,13 @@ class Interpreter(NodeVisitor):
             return self.visit(node.left) * self.visit(node.right)
         elif op_type == DIV:
             return self.visit(node.left) / self.visit(node.right)
+
+    def visit_UnaryOp(self, node):
+        op_type = node.operator.type
+        if op_type == PLUS:
+            return +self.visit(node.expr)
+        elif op_type == MINUS: 
+            return -self.visit(node.expr)
 
     def visit_Num(self, node):
         return node.value
