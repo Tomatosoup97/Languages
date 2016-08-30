@@ -5,7 +5,7 @@ from .factories import InterpreterFactory
 from tokens import *
 
 
-class CalculationTestCase(unittest.TestCase):
+class TestCalculations(unittest.TestCase):
     def test_addition(self):
         interpreter = InterpreterFactory('20 + 4')
         self.assertEqual(interpreter.interpret(), 24)
@@ -28,38 +28,39 @@ class CalculationTestCase(unittest.TestCase):
         interpreter = InterpreterFactory('12 / 3')
         self.assertEqual(interpreter.interpret(), 4)
 
-    def test_precedence_of_operators(self):
+
+class TestPrecedenceOfOperators(unittest.TestCase):
+    def test_last(self):
         interpreter = InterpreterFactory('10 + 4 / 2')
         self.assertEqual(interpreter.interpret(), 12)
-
         interpreter = InterpreterFactory('10 + 4 * 2')
         self.assertEqual(interpreter.interpret(), 18)
 
+    def test_first(self):
         interpreter = InterpreterFactory('4 * 2 + 10')
         self.assertEqual(interpreter.interpret(), 18)
 
+    def test_middle(self):
         interpreter = InterpreterFactory('10 + 4 * 2 - 8')
         self.assertEqual(interpreter.interpret(), 10)
 
-    def test_parenthesized_expressions(self):
+
+class TestParenthesizedExpressions(unittest.TestCase):
+    def test_basic(self):
         interpreter = InterpreterFactory('(10 + 4) / 2')
         self.assertEqual(interpreter.interpret(), 7)
 
         interpreter = InterpreterFactory('(1 + 4) * 2')
         self.assertEqual(interpreter.interpret(), 10)
-        
+
+    def test_two_parenthesis(self):
         interpreter = InterpreterFactory('(2 + 1) * (6 - 2)')
         self.assertEqual(interpreter.interpret(), 12)
 
+    def test_nested_parenthesis(self):
         interpreter = InterpreterFactory('1 + 3 * ((4 + 2) / 2)')
         self.assertEqual(interpreter.interpret(), 10)
 
+    def test_complex_expression(self):
         interpreter = InterpreterFactory('7+3 * (10 / (12 / (3+1) - 1))')
         self.assertEqual(interpreter.interpret(), 22)
-
-    def test_whitespace_ommition(self):
-        interpreter = InterpreterFactory('2 +   3')
-        self.assertEqual(interpreter.interpret(), 5)
-
-        interpreter = InterpreterFactory('  7 +  4 ')
-        self.assertEqual(interpreter.interpret(), 11)

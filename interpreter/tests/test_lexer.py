@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import unittest
 
-from .factories import LexerFactory
+from .factories import LexerFactory, InterpreterFactory
 from tokens import *
 
 
@@ -26,3 +26,10 @@ class LexerTestCase(unittest.TestCase):
         token = lexer.get_next_token()
         self.assertEqual(token.type, DIV)
         self.assertEqual(token.value, value)
+
+    def test_whitespace_ommition(self):
+        interpreter = InterpreterFactory('2 +   3')
+        self.assertEqual(interpreter.interpret(), 5)
+
+        interpreter = InterpreterFactory('  7 +  4 ')
+        self.assertEqual(interpreter.interpret(), 11)
