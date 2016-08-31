@@ -20,13 +20,28 @@ class Interpreter(NodeVisitor):
     def __init__(self, parser):
         self.parser = parser
 
+    def visit_Compound(self, node):
+        for child in node.children:
+            self.visit(child)
+
+    def visit_Assign(self, node):
+        var_name = node.left.value
+        self.GLOBAL_SCOPE[var_name] = visit(node.right)
+
+    def visit_Var(self, node):
+        var_name = node.value
+        value = self.GLOBAL_SCOPE.get(var_name)
+        if value is None:
+            raise NameError(repr(var_name))
+        return value
+
     def visit_BinOp(self, node):
         op_type = node.operator.type
         if op_type == PLUS:
             return self.visit(node.left) + self.visit(node.right)
         elif op_type == MINUS:
             return self.visit(node.left) - self.visit(node.right)
-        elif op_type == MULTIPLY:
+        elif op_type == MUL:
             return self.visit(node.left) * self.visit(node.right)
         elif op_type == DIV:
             return self.visit(node.left) / self.visit(node.right)
@@ -37,6 +52,9 @@ class Interpreter(NodeVisitor):
             return +self.visit(node.expr)
         elif op_type == MINUS: 
             return -self.visit(node.expr)
+
+    def visit_NoOp(self, node):
+        pass
 
     def visit_Num(self, node):
         return node.value

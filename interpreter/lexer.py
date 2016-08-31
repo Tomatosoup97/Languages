@@ -15,6 +15,12 @@ class Token(object):
         return self.__str__()
 
 
+RESERVED_KEYWORDS = {
+    'BEGIN': Token('BEGIN', 'BEGIN'),
+    'END': Token('END', 'END'),
+}
+
+
 class Lexer(object):
     def __init__(self, text):
         self.text = text
@@ -33,6 +39,21 @@ class Lexer(object):
             self.current_char = None
         else:
             self.current_char = self.text[self.position]
+
+    def peek(self):
+        peek_pos = self.position + 1
+        if peek_pos > len(self.text) -1:
+            return None
+        return self.text[peek_pos]
+
+    def _id(self):
+        """ Handle identifiers and reserved keywords """
+        result = ''
+        while self.current_char is not None and self.current_char.isalnum():
+            result += self.current_char
+            self.next()
+        token = RESERVED_KEYWORDS.get(result, Token(ID, result))
+        return token
 
     def skip_whitespace(self):
         while self.current_char is not None and \
@@ -61,6 +82,21 @@ class Lexer(object):
                 self.skip_whitespace()
                 continue
 
+            if self.current_char.isalpha():
+                return self._id()
+
+            if self.current_char is ':' and self.peek() == '=':
+                self.next(); self.next()
+                return Token(ASSIGN, ':=')
+
+            if self.current_char is ';':
+                self.next()
+                return Token(SEMI, ';')
+
+            if self.current_char is '.':
+                self.next()
+                return Token(DOT, '.')
+
             if self.current_char.isdigit():
                 return Token(INTEGER, self.integer())
 
@@ -74,7 +110,7 @@ class Lexer(object):
 
             if self.current_char == '*':
                 self.next()
-                return Token(MULTIPLY, '*')
+                return Token(MUL, '*')
 
             if self.current_char == '/':
                 self.next()

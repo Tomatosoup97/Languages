@@ -1,6 +1,7 @@
-INTEGER, LPAREN, RPAREN, EOF = (
-    'INTEGER',  '(', ')', 'EOF',
-)
-PLUS, MINUS, MULTIPLY, DIV, = (
-    'PLUS', 'MINUS', 'MULTIPLY', 'DIV',
-)
+EOF = 'EOF'
+INTEGER = 'INTEGER'
+LPAREN, RPAREN, = ('(', ')',)
+PLUS, MINUS, MUL, DIV, = ('PLUS', 'MINUS', 'MUL', 'DIV',)
+ID = 'ID'
+ASSIGN, SEMI, DOT = ('ASSIGN', 'SEMI', 'DOT')
+BEGIN, END = ('BEGIN', 'END')
