@@ -3,6 +3,7 @@
 from parser import Parser
 from lexer import Lexer
 from tokens import *
+from exceptions import NoSuchVisitorException
 
 
 class NodeVisitor(object):
@@ -12,7 +13,7 @@ class NodeVisitor(object):
         return visitor(node)
 
     def generic_visit(self, node):
-        raise Exception(
+        raise NoSuchVisitorException(
                 'No visit_{} method'.format(type(node).__name__))
 
 

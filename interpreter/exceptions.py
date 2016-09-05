@@ -3,5 +3,5 @@ class NoSuchVisitorException(Exception):
     pass
 
 
-class NoSuchTokenExceptionException(Exception):
+class LexerException(Exception):
     pass

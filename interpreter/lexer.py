@@ -1,7 +1,7 @@
 import re
-import time 
 
 from tokens import *
+from exceptions import LexerException
 
 
 class Token(object):
@@ -36,7 +36,10 @@ class Lexer(object):
         self.current_char = self.text[self.position]
 
     def error(self):
-        raise Exception('Error parsing input')
+        raise LexerException(
+            """Error tokenizing input on character: {} and {} position
+            """.format(self.current_char, self.position)
+        )
 
     def next(self):
         """
