@@ -25,10 +25,6 @@ class Var(AST):
         self.value = token.value
 
 
-class NoOp(AST):
-    pass
-
-
 class BinOp(AST):
     def __init__(self, left, operator, right):
         self.left = left
@@ -40,6 +36,10 @@ class UnaryOp(AST):
     def __init__(self, operator, expr):
         self.token = self.operator = operator
         self.expr = expr
+
+
+class NoOp(AST):
+    pass
 
 
 class Num(AST):
@@ -113,6 +113,12 @@ class Parser(object):
         else:
             return self.empty()
 
+    def empty(self):
+        """
+        empty :
+        """
+        return NoOp()
+
     def assignment_statement(self):
         """ 
         assignment_statement : variable ASSIGN expr
@@ -123,19 +129,36 @@ class Parser(object):
         right = self.expr()
         return Assign(left, token, right)
 
-    def variable(self):
+    def expr(self):
         """
-        variable : ID
+        expr : term ((PLUS | MINUS) term)*
         """
-        node = Var(self.current_token)
-        self.consume(ID)
+        node = self.term()
+
+        while self.current_token.type in (PLUS, MINUS):
+            token = self.current_token
+            if token.type == PLUS:
+                self.consume(PLUS)
+            elif token.type == MINUS:
+                self.consume(MINUS)
+
+            node = BinOp(left=node, operator=token, right=self.term())
         return node
 
-    def empty(self):
+    def term(self):
         """
-        empty :
+        term : factor ((MUL | DIV) factor)*
         """
-        return NoOp()
+        node = self.factor()
+
+        while self.current_token.type in (MUL, DIV):
+            token = self.current_token
+            if token.type == MUL:
+                self.consume(MUL)
+            if token.type == DIV:
+                self.consume(DIV)
+            node = BinOp(left=node, operator=token, right=self.factor())
+        return node
 
     def factor(self):
         """
@@ -166,35 +189,12 @@ class Parser(object):
         else:
             return self.variable()
 
-    def term(self):
+    def variable(self):
         """
-        term : factor ((MUL | DIV) factor)*
+        variable : ID
         """
-        node = self.factor()
-
-        while self.current_token.type in (MUL, DIV):
-            token = self.current_token
-            if token.type == MUL:
-                self.consume(MUL)
-            if token.type == DIV:
-                self.consume(DIV)
-            node = BinOp(left=node, operator=token, right=self.factor())
-        return node
-
-    def expr(self):
-        """
-        expr : term ((PLUS | MINUS) term)*
-        """
-        node = self.term()
-
-        while self.current_token.type in (PLUS, MINUS):
-            token = self.current_token
-            if token.type == PLUS:
-                self.consume(PLUS)
-            elif token.type == MINUS:
-                self.consume(MINUS)
-
-            node = BinOp(left=node, operator=token, right=self.term())
+        node = Var(self.current_token)
+        self.consume(ID)
         return node
 
     def parse(self):

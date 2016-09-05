@@ -20,6 +20,7 @@ class Token(object):
 RESERVED_KEYWORDS = {
     'BEGIN': Token('BEGIN', 'BEGIN'),
     'END': Token('END', 'END'),
+    'DIV': Token('DIV', 'DIV'),
 }
 
 
