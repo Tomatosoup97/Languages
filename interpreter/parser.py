@@ -6,8 +6,22 @@ class AST(object):
     pass
 
 
+class Program(AST):
+    def __init__(self, name, block):
+        self.name = name
+        self.block = block
+
+
+class Block(AST):
+    def __init__(self, declarations, compound_statement):
+        self.declarations = declarations
+        self.compound_statement = compound_statement
+
+
 class Compound(AST):
-    """ 'BEGIN ... END' block """
+    """
+    'BEGIN ... END' block
+    """
     def __init__(self):
         self.children = []
 
@@ -17,6 +31,18 @@ class Assign(AST):
         self.left = left
         self.token = self.operator = operator
         self.right = right
+
+
+class VarDecl(AST):
+    def __init__(self, var, var_type):
+        self.var = var
+        self.type = var_type
+
+
+class Type(AST):
+    def __init__(self, token):
+        self.token = self.type = token
+        self.value = token.value
 
 
 class Var(AST):
@@ -60,7 +86,6 @@ class Parser(object):
         """
         If token match with expected token,
         consume current and get next token
-        Otherwise throw exception
         """
         if self.current_token.type == token_type:
             self.current_token = self.lexer.get_next_token()
@@ -69,11 +94,61 @@ class Parser(object):
 
     def program(self):
         """
-        program : compound_statement DOT
+        program : PROGRAM variable SEMI block DOT
         """
-        node = self.compound_statement()
+        self.consume(PROGRAM)
+        program_name = self.variable().value
+        self.consume(SEMI)
+        block_node = self.block()
         self.consume(DOT)
-        return node
+        return Program(program_name, block_node)
+
+    def block(self):
+        """ 
+        block : declarations compound_statement
+        """
+        return Block(self.declarations(), self.compound_statement())
+
+    def declarations(self):
+        """
+        declarations : VAR (variable_declaration SEMI)+ 
+                     | empty
+        """
+        declarations = []
+        if self.current_token.type == VAR:
+            self.consume(VAR)
+            while self.current_token.type == ID:
+                declarations.extend(self.variable_declaration())
+                self.consume(SEMI)
+        return declarations
+
+    def variable_declaration(self):
+        """
+        variable_declaration : ID (COMMA ID)* COLON type_spec
+        """
+        variables = [self.variable()]
+        while self.current_token.type == COMMA:
+            self.consume(COMMA)
+            variables.append(self.variable())
+        
+        self.consume(COLON)
+        var_type = self.type_spec()
+        var_declarations = [
+            VarDecl(variable, var_type)
+            for variable in variables
+        ]
+        return var_declarations
+
+    def type_spec(self):
+        """type_spec : INTEGER
+                     | REAL
+        """
+        token = self.current_token
+        if token.type == INTEGER:
+            self.consume(INTEGER)
+        elif token.type == REAL:
+            self.consume(REAL)
+        return Type(token)
 
     def compound_statement(self):
         """
@@ -147,16 +222,19 @@ class Parser(object):
 
     def term(self):
         """
-        term : factor ((MUL | DIV) factor)*
+        term : factor ((MUL | INTEGER_DIV | FLOAT_DIV) factor)*
         """
         node = self.factor()
 
-        while self.current_token.type in (MUL, DIV):
+        while self.current_token.type in (MUL, INTEGER_DIV, FLOAT_DIV):
             token = self.current_token
             if token.type == MUL:
                 self.consume(MUL)
-            if token.type == DIV:
-                self.consume(DIV)
+            if token.type == INTEGER_DIV:
+                self.consume(INTEGER_DIV)
+            if token.type == FLOAT_DIV:
+                self.consume(FLOAT_DIV)
+
             node = BinOp(left=node, operator=token, right=self.factor())
         return node
 
@@ -164,7 +242,8 @@ class Parser(object):
         """
         factor : PLUS  factor 
                | MINUS factor
-               | INTEGER 
+               | INTEGER_CONST
+               | REAL_CONST 
                | LPAREN expr RPAREN
                | variable
         """
@@ -177,8 +256,12 @@ class Parser(object):
             self.consume(MINUS)
             return UnaryOp(token, self.factor())
 
-        elif token.type == INTEGER:
-            self.consume(INTEGER)
+        elif token.type == INTEGER_CONST:
+            self.consume(INTEGER_CONST)
+            return Num(token)
+
+        elif token.type == REAL_CONST:
+            self.consume(REAL_CONST)
             return Num(token)
 
         elif token.type == LPAREN:

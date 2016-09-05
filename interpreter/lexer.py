@@ -1,4 +1,5 @@
 import re
+import time 
 
 from tokens import *
 
@@ -18,9 +19,13 @@ class Token(object):
 
 
 RESERVED_KEYWORDS = {
+    'PROGRAM': Token('PROGRAM', 'PROGRAM'),
     'BEGIN': Token('BEGIN', 'BEGIN'),
     'END': Token('END', 'END'),
-    'DIV': Token('DIV', 'DIV'),
+    'DIV': Token('INTEGER_DIV', 'DIV'),
+    'VAR': Token('VAR', 'VAR'),
+    'INTEGER': Token('INTEGER', 'INTEGER'),
+    'REAL': Token('REAL', 'REAL'),
 }
 
 
@@ -44,13 +49,18 @@ class Lexer(object):
             self.current_char = self.text[self.position]
 
     def peek(self):
+        """
+        Check what next char will be without advancing position
+        """
         peek_pos = self.position + 1
         if peek_pos > len(self.text) -1:
             return None
         return self.text[peek_pos]
 
     def _id(self):
-        """ Handle identifiers and reserved keywords """
+        """
+        Handle identifiers and reserved keywords
+        """
         result = ''
         while self.current_char is not None and \
                 re.match('\w', self.current_char):
@@ -61,20 +71,31 @@ class Lexer(object):
         return token
 
     def skip_whitespace(self):
-        while self.current_char is not None and \
-                 self.current_char.isspace():
+        while self.current_char is not None and self.current_char.isspace():
             self.next()
 
+    def skip_comment(self):
+        self.next() # the opening curly brace
+        while self.current_char != '}':
+            self.next()
+        self.next() # the closing curly brace
+
     def integer(self):
-        """ 
-        Return integer from the input
-        """
         result = ''
         while self.current_char is not None and \
                 self.current_char.isdigit():
             result += self.current_char
             self.next()
         return int(result)
+
+    def number(self):
+        result = str(self.integer())
+        if self.current_char == '.':
+            self.next()
+            result += '.' + str(self.integer())
+            return Token(REAL_CONST, float(result))
+        else:
+            return Token(INTEGER_CONST, int(result))
 
     def get_next_token(self):
         """ 
@@ -84,6 +105,10 @@ class Lexer(object):
         while self.current_char is not None:
             if self.current_char.isspace():
                 self.skip_whitespace()
+                continue
+
+            if self.current_char is '{':
+                self.skip_comment()
                 continue
 
             if re.match('[_a-zA-Z]', self.current_char):
@@ -97,12 +122,20 @@ class Lexer(object):
                 self.next()
                 return Token(SEMI, ';')
 
+            if self.current_char is ':':
+                self.next()
+                return Token(COLON, ':')
+
             if self.current_char is '.':
                 self.next()
                 return Token(DOT, '.')
 
+            if self.current_char is ',':
+                self.next()
+                return Token(COMMA, ',')
+
             if self.current_char.isdigit():
-                return Token(INTEGER, self.integer())
+                return self.number()
 
             if self.current_char == '+':
                 self.next()
@@ -118,7 +151,7 @@ class Lexer(object):
 
             if self.current_char == '/':
                 self.next()
-                return Token(DIV, '/')
+                return Token(FLOAT_DIV, '/')
 
             if self.current_char == '(':
                 self.next()
