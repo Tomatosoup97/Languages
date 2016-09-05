@@ -1,3 +1,5 @@
+import re
+
 from tokens import *
 
 
@@ -49,9 +51,11 @@ class Lexer(object):
     def _id(self):
         """ Handle identifiers and reserved keywords """
         result = ''
-        while self.current_char is not None and self.current_char.isalnum():
+        while self.current_char is not None and \
+                re.match('\w', self.current_char):
             result += self.current_char
             self.next()
+        result = result.upper()
         token = RESERVED_KEYWORDS.get(result, Token(ID, result))
         return token
 
@@ -81,7 +85,7 @@ class Lexer(object):
                 self.skip_whitespace()
                 continue
 
-            if self.current_char.isalpha():
+            if re.match('[_a-zA-Z]', self.current_char):
                 return self._id()
 
             if self.current_char is ':' and self.peek() == '=':
