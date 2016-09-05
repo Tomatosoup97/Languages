@@ -17,6 +17,9 @@ class NodeVisitor(object):
 
 
 class Interpreter(NodeVisitor):
+
+    GLOBAL_SCOPE = {}
+
     def __init__(self, parser):
         self.parser = parser
 
@@ -26,7 +29,7 @@ class Interpreter(NodeVisitor):
 
     def visit_Assign(self, node):
         var_name = node.left.value
-        self.GLOBAL_SCOPE[var_name] = visit(node.right)
+        self.GLOBAL_SCOPE[var_name] = self.visit(node.right)
 
     def visit_Var(self, node):
         var_name = node.value
@@ -65,18 +68,14 @@ class Interpreter(NodeVisitor):
 
 
 def main():
-    while True:
-        try:
-            text = input('>>> ')
-        except EOFError:
-            break
-        if not text:
-            continue
-        lexer = Lexer(text)
-        parser = Parser(lexer)
-        interpreter = Interpreter(parser)
-        result = interpreter.interpret()
-        print(result)
+    import sys
+    text = open(sys.argv[1], 'r').read()
+    
+    lexer = Lexer(text)
+    parser = Parser(lexer)
+    interpreter = Interpreter(parser)
+    interpreter.interpret()
+    print(interpreter.GLOBAL_SCOPE)
 
 
 if __name__ == '__main__':

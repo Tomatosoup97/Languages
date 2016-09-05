@@ -1,32 +1,3 @@
-"""
-Parser Grammar 
-
-program : compound_statement DOT
-
-compound_statement: BEGIN statement_list END
-
-statement_list : statement 
-               | statement SEMI statement_list
-
-statement : compound_statement
-          | assignment_statement
-          | empty
-
-assignment_statement: variable ASSIGN expr
-
-empty : 
-
-expr    : term ((PLUS | MINUS) term)*
-term    : factor ((MUL | DIV) factor)*
-factor  : PLUS  factor 
-        | MINUS factor
-        | INTEGER 
-        | LPAREN expr RPAREN
-        | variable
-
-variable : ID
-"""
-
 from tokens import *
 
 
@@ -44,7 +15,7 @@ class Compound(AST):
 class Assign(AST):
     def __init__(self, left, operator, right):
         self.left = left
-        self.token = self.operator = self.operator
+        self.token = self.operator = operator
         self.right = right
 
 
@@ -111,7 +82,8 @@ class Parser(object):
         self.consume(BEGIN)
         nodes = self.statement_list()
         self.consume(END)
-        root = Compund()
+        root = Compound()
+
         for node in nodes:
             root.children.append(node)
         return root

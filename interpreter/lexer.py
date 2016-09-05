@@ -73,11 +73,10 @@ class Lexer(object):
 
     def get_next_token(self):
         """ 
-        Lexical anaylzer
+        Lexical anaylzer (tokenizer)
         Breaks sentence apart into tokens
         """
         while self.current_char is not None:
-
             if self.current_char.isspace():
                 self.skip_whitespace()
                 continue
