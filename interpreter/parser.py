@@ -74,24 +74,41 @@ class Num(AST):
         self.value = token.value
 
 
+class String(AST):
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value
+
+
+class Boolean(AST):
+    def __init__(self, token):
+        self.token = token
+        self.value = bool(token.value)
+
+
 class Parser(object):
     def __init__(self, lexer):
         self.lexer = lexer
         self.current_token = self.lexer.get_next_token()
 
-    def error(self):
-        raise SyntaxError('Invalid syntax on: {type} token, {val} val'.format(
-            type=self.current_token.type, val=self.current_token.value))
+    def error(self, extra=''):
+        raise SyntaxError(
+            'Invalid syntax on: token {type}, val {val}. {extra}'.format(
+                type=self.current_token.type,
+                val=self.current_token.value,
+                extra=extra))
 
     def consume(self, token_type):
         """
         If token match with expected token,
         consume current and get next token
         """
+        print(self.current_token)
+        print(token_type)
         if self.current_token.type == token_type:
             self.current_token = self.lexer.get_next_token()
         else:
-            self.error()
+            self.error("Expected: {}".format(token_type))
 
     def program(self):
         """
@@ -149,6 +166,10 @@ class Parser(object):
             self.consume(INTEGER)
         elif token.type == REAL:
             self.consume(REAL)
+        elif token.type == STRING:
+            self.consume(STRING)
+        elif token.type == BOOLEAN:
+            self.consume(BOOLEAN)
         return Type(token)
 
     def compound_statement(self):
@@ -197,17 +218,53 @@ class Parser(object):
 
     def assignment_statement(self):
         """ 
-        assignment_statement : variable ASSIGN expr
+        assignment_statement : variable ASSIGN expression
         """
         left = self.variable()
         token = self.current_token
         self.consume(ASSIGN)
-        right = self.expr()
+        right = self.expression()
         return Assign(left, token, right)
 
-    def expr(self):
+    def expression(self):
         """
-        expr : term ((PLUS | MINUS) term)*
+        expression : simple_expression
+                   | boolean_expression
+                   | string_expression
+        """
+        token = self.current_token
+        if token.type in (TRUE, FALSE):
+            return self.boolean_expression()
+        elif token.type == STRING_CONST:
+            return self.string_expression()
+        else:
+            return self.simple_expression()
+
+    def boolean_expression(self):
+        """
+        boolean_expression : (TRUE | FALSE)
+        """
+        token = self.current_token
+        if token.type == TRUE:
+            self.consume(TRUE)
+            return Boolean(token)
+
+        elif token.type == FALSE:
+            self.consume(FALSE)
+            return Boolean(token)
+
+    def string_expression(self):
+        """
+        string_expression : STRING_CONST
+        """
+        token = self.current_token
+        if token.type == STRING_CONST:
+            self.consume(STRING_CONST)
+            return String(token)
+
+    def simple_expression(self):
+        """
+        simple_expression : term ((PLUS | MINUS) term)*
         """
         node = self.term()
 
@@ -244,8 +301,8 @@ class Parser(object):
         factor : PLUS  factor 
                | MINUS factor
                | INTEGER_CONST
-               | REAL_CONST 
-               | LPAREN expr RPAREN
+               | REAL_CONST
+               | LPAREN expression RPAREN
                | variable
         """
         token = self.current_token
@@ -267,7 +324,7 @@ class Parser(object):
 
         elif token.type == LPAREN:
             self.consume(LPAREN)
-            node = self.expr()
+            node = self.simple_expression()
             self.consume(RPAREN)
             return node
         else:

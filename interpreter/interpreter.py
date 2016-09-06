@@ -79,6 +79,12 @@ class Interpreter(NodeVisitor):
     def visit_Num(self, node):
         return node.value
 
+    def visit_String(self, node):
+        return node.value
+
+    def visit_Boolean(self, node):
+        return node.value
+
     def interpret(self):
         tree = self.parser.parse()
         return self.visit(tree)

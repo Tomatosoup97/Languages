@@ -26,6 +26,10 @@ RESERVED_KEYWORDS = {
     'VAR': Token('VAR', 'VAR'),
     'INTEGER': Token('INTEGER', 'INTEGER'),
     'REAL': Token('REAL', 'REAL'),
+    'STRING': Token('STRING', 'STRING'),
+    'BOOLEAN': Token('BOOLEAN', 'BOOLEAN'),
+    'TRUE': Token('TRUE', 'True'),
+    'FALSE': Token('FALSE', 'False'),
 }
 
 
@@ -78,7 +82,6 @@ class Lexer(object):
             self.next()
 
     def skip_comment(self):
-        self.next() # the opening curly brace
         while self.current_char != '}':
             self.next()
         self.next() # the closing curly brace
@@ -100,6 +103,14 @@ class Lexer(object):
         else:
             return Token(INTEGER_CONST, int(result))
 
+    def string(self):
+        result = ''
+        while self.current_char != '\'':
+            result += self.current_char
+            self.next()
+        self.next()
+        return Token(STRING_CONST, result)
+
     def get_next_token(self):
         """ 
         Lexical anaylzer (tokenizer)
@@ -111,15 +122,23 @@ class Lexer(object):
                 continue
 
             if self.current_char is '{':
+                self.next()
                 self.skip_comment()
                 continue
 
             if re.match('[_a-zA-Z]', self.current_char):
                 return self._id()
 
+            if self.current_char.isdigit():
+                return self.number()
+
             if self.current_char is ':' and self.peek() == '=':
                 self.next(); self.next()
                 return Token(ASSIGN, ':=')
+
+            if self.current_char is '\'':
+                self.next()
+                return self.string()
 
             if self.current_char is ';':
                 self.next()
@@ -136,9 +155,6 @@ class Lexer(object):
             if self.current_char is ',':
                 self.next()
                 return Token(COMMA, ',')
-
-            if self.current_char.isdigit():
-                return self.number()
 
             if self.current_char == '+':
                 self.next()

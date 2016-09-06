@@ -4,6 +4,7 @@ Simple pascal interpreter written in python
 
 ## Grammar:
 
+
 ```
 program : PROGRAM variable SEMI block DOT
 
@@ -29,7 +30,15 @@ assignment_statement : variable ASSIGN expr
 
 empty :
 
-expr : term ((PLUS | MINUS) term)*
+expression : simple_expression
+           | boolean_expression
+           | string_expression
+
+boolean_expression : (TRUE | FALSE)
+
+string_expression : STRING_CONST
+
+simple_expression : term ((PLUS | MINUS) term)*
 
 term : factor ((MUL | INTEGER_DIV | FLOAT_DIV) factor)*
 
