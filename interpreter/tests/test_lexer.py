@@ -1,44 +1,31 @@
 #!/usr/bin/env python3
 import unittest
 
-from .factories import LexerFactory, InterpreterFactory
-from lexer import Token
+from .factories import LexerFactory
 from tokens import *
 
 
-class TestLexerReservedKeywords(unittest.TestCase):
-    def test_keywords(self):
-        lexer = LexerFactory('BEGIN END.')
-        assert lexer.get_next_token() == Token(BEGIN, 'BEGIN')
-        assert lexer.get_next_token() == Token(END, 'END')
-        assert lexer.get_next_token() == Token(DOT, '.')
-
-
 class LexerTestCase(unittest.TestCase):
-    def test_integer(self):
-        value = '123'
-        lexer = LexerFactory(value)
-        token = lexer.get_next_token()
-        self.assertEqual(token.type, INTEGER)
-        self.assertEqual(token.value, int(value))
-
-    def test_MUL(self):
-        value = '*'
-        lexer = LexerFactory(value)
-        token = lexer.get_next_token()
-        self.assertEqual(token.type, MUL)
-        self.assertEqual(token.value, value)
-
-    def test_division(self):
-        value = '/'
-        lexer = LexerFactory(value)
-        token = lexer.get_next_token()
-        self.assertEqual(token.type, DIV)
-        self.assertEqual(token.value, value)
-
-    def test_whitespace_ommition(self):
-        interpreter = InterpreterFactory('2 +   3')
-        self.assertEqual(interpreter.interpret(), 5)
-
-        interpreter = InterpreterFactory('  7 +  4 ')
-        self.assertEqual(interpreter.interpret(), 11)
+    def test_tokens(self):
+        records = (
+            ('234', INTEGER_CONST, 234),
+            ('3.14', REAL_CONST, 3.14),
+            ('*', MUL, '*'),
+            ('DIV', INTEGER_DIV, 'DIV'),
+            ('/', FLOAT_DIV, '/'),
+            ('+', PLUS, '+'),
+            ('-', MINUS, '-'),
+            ('(', LPAREN, '('),
+            (')', RPAREN, ')'),
+            (':=', ASSIGN, ':='),
+            ('.', DOT, '.'),
+            ('number', ID, 'number'),
+            (';', SEMI, ';'),
+            ('BEGIN', BEGIN, 'BEGIN'),
+            ('END', END, 'END'),
+        )
+        for text, tok_type, tok_val in records:
+            lexer = LexerFactory(text)
+            token = lexer.get_next_token()
+            self.assertEqual(token.type, tok_type)
+            self.assertEqual(token.value, tok_val)

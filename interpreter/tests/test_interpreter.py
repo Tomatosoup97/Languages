@@ -1,82 +1,107 @@
-#!/usr/bin/env python3
 import unittest
 
-from .factories import InterpreterFactory
 from tokens import *
+from .factories import InterpreterFactory
 
 
-class TestUnaryOperator(unittest.TestCase):
-    def test_basic(self):
-        interpreter = InterpreterFactory('5 -- 2')
-        self.assertEqual(interpreter.interpret(), 7)
-        interpreter = InterpreterFactory('5 +- 2')
-        self.assertEqual(interpreter.interpret(), 3)
+class InterpreterTestCase(unittest.TestCase):
+    def test_integer_arithmetic_expressions(self):
+        for expr, result in (
+            ('3', 3),
+            ('2 + 7 * 4', 30),
+            ('7 - 8 DIV 4', 5),
+            ('14 + 2 * 3 - 6 DIV 2', 17),
+            ('7 + 3 * (10 DIV (12 DIV (3 + 1) - 1))', 22),
+            ('7 + 3 * (10 DIV (12 DIV (3 + 1) - 1)) DIV (2 + 3) - 5 - 3 + (8)', 10),
+            ('7 + (((3 + 2)))', 12),
+            ('- 3', -3),
+            ('+ 3', 3),
+            ('5 - - - + - 3', 8),
+            ('5 - - - + - (3 + 4) - +2', 10),
+        ):
+            interpreter = InterpreterFactory(
+                """PROGRAM Test;
+                   VAR
+                       a : INTEGER;
+                   BEGIN
+                       a := {}
+                   END.
+                """.format(expr)
+            )
+            interpreter.interpret()
+            globals = interpreter.GLOBAL_SCOPE
+            self.assertEqual(globals['a'], result)
 
-    def test_complex(self):
-        interpreter = InterpreterFactory('5 -+--+- 2')
-        self.assertEqual(interpreter.interpret(), 7)
+    def test_float_arithmetic_expressions(self):
+        for expr, result in (
+            ('3.14', 3.14),
+            ('2.14 + 7 * 4', 30.14),
+            ('7.14 - 8 / 4', 5.14),
+        ):
+            interpreter = InterpreterFactory(
+                """PROGRAM Test;
+                   VAR
+                       a : REAL;
+                   BEGIN
+                       a := {}
+                   END.
+                """.format(expr)
+            )
+            interpreter.interpret()
+            globals = interpreter.GLOBAL_SCOPE
+            self.assertEqual(globals['a'], result)
 
-    def test_in_the_middle(self):
-        interpreter = InterpreterFactory('2 + 5 -- 2 ++ 3')
-        self.assertEqual(interpreter.interpret(), 12)
+    def test_expression_invalid_syntax_01(self):
+        interpreter = InterpreterFactory(
+            """
+            PROGRAM Test;
+            BEGIN
+               a := 10 * ;  {Invalid syntax}
+            END.
+            """
+        )
+        with self.assertRaises(Exception):
+            interpreter.interpret()
+
+    def test_expression_invalid_syntax_02(self):
+        interpreter = InterpreterFactory(
+            """
+            PROGRAM Test;
+            BEGIN
+               a := 1 (1 + 2); {Invalid syntax}
+            END.
+            """
+        )
+        with self.assertRaises(Exception):
+            interpreter.interpret()
+
+    def test_program(self):
+        text = """\
+            PROGRAM testing;
+            VAR
+               number     : INTEGER;
+               a, b, c, x : INTEGER;
+               y          : REAL;
+            BEGIN
+               BEGIN
+                  number := 2;
+                  a := number;
+                  b := 10 * a + 10 * number DIV 4;
+                  c := a - -b
+               END;
+               x := 11;
+               y := 5 / 2;
+            END.
+        """
+        interpreter = InterpreterFactory(text)
+        interpreter.interpret()
+
+        globals = interpreter.GLOBAL_SCOPE
+        expected = {
+            'number': 2, 'a': 2, 'b': 25, 'c': 27, 'x': 11, 'y': 5/2
+        }
+        assert globals == expected
 
 
-class TestCalculations(unittest.TestCase):
-    def test_addition(self):
-        interpreter = InterpreterFactory('20 + 4')
-        self.assertEqual(interpreter.interpret(), 24)
-        interpreter = InterpreterFactory('2220 + 4')
-        self.assertEqual(interpreter.interpret(), 2224)
-
-    def test_substraction(self):
-        interpreter = InterpreterFactory('16-6')
-        self.assertEqual(interpreter.interpret(), 10)
-
-    def test_negative_substraction(self):
-        interpreter = InterpreterFactory('6 - 16')
-        self.assertEqual(interpreter.interpret(), -10)
-
-    def test_multiplication(self):
-        interpreter = InterpreterFactory('4 * 3')
-        self.assertEqual(interpreter.interpret(), 12)
-
-    def test_division(self):
-        interpreter = InterpreterFactory('12 / 3')
-        self.assertEqual(interpreter.interpret(), 4)
-
-
-class TestPrecedenceOfOperators(unittest.TestCase):
-    def test_last(self):
-        interpreter = InterpreterFactory('10 + 4 / 2')
-        self.assertEqual(interpreter.interpret(), 12)
-        interpreter = InterpreterFactory('10 + 4 * 2')
-        self.assertEqual(interpreter.interpret(), 18)
-
-    def test_first(self):
-        interpreter = InterpreterFactory('4 * 2 + 10')
-        self.assertEqual(interpreter.interpret(), 18)
-
-    def test_middle(self):
-        interpreter = InterpreterFactory('10 + 4 * 2 - 8')
-        self.assertEqual(interpreter.interpret(), 10)
-
-
-class TestParenthesizedExpressions(unittest.TestCase):
-    def test_basic(self):
-        interpreter = InterpreterFactory('(10 + 4) / 2')
-        self.assertEqual(interpreter.interpret(), 7)
-
-        interpreter = InterpreterFactory('(1 + 4) * 2')
-        self.assertEqual(interpreter.interpret(), 10)
-
-    def test_two_parenthesis(self):
-        interpreter = InterpreterFactory('(2 + 1) * (6 - 2)')
-        self.assertEqual(interpreter.interpret(), 12)
-
-    def test_nested_parenthesis(self):
-        interpreter = InterpreterFactory('1 + 3 * ((4 + 2) / 2)')
-        self.assertEqual(interpreter.interpret(), 10)
-
-    def test_complex_expression(self):
-        interpreter = InterpreterFactory('7+3 * (10 / (12 / (3+1) - 1))')
-        self.assertEqual(interpreter.interpret(), 22)
+if __name__ == '__main__':
+    unittest.main()
