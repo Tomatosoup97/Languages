@@ -19,7 +19,7 @@ class LexerTestCase(unittest.TestCase):
             (')', RPAREN, ')'),
             (':=', ASSIGN, ':='),
             ('.', DOT, '.'),
-            ('number', ID, 'number'),
+            ('NUMBER', ID, 'NUMBER'),
             (';', SEMI, ';'),
             ('BEGIN', BEGIN, 'BEGIN'),
             ('END', END, 'END'),

@@ -30,7 +30,7 @@ class InterpreterTestCase(unittest.TestCase):
             )
             interpreter.interpret()
             globals = interpreter.GLOBAL_SCOPE
-            self.assertEqual(globals['a'], result)
+            self.assertEqual(globals['A'], result)
 
     def test_float_arithmetic_expressions(self):
         for expr, result in (
@@ -49,7 +49,7 @@ class InterpreterTestCase(unittest.TestCase):
             )
             interpreter.interpret()
             globals = interpreter.GLOBAL_SCOPE
-            self.assertEqual(globals['a'], result)
+            self.assertEqual(globals['A'], result)
 
     def test_expression_invalid_syntax_01(self):
         interpreter = InterpreterFactory(
@@ -98,7 +98,7 @@ class InterpreterTestCase(unittest.TestCase):
 
         globals = interpreter.GLOBAL_SCOPE
         expected = {
-            'number': 2, 'a': 2, 'b': 25, 'c': 27, 'x': 11, 'y': 5/2
+            'NUMBER': 2, 'A': 2, 'B': 25, 'C': 27, 'X': 11, 'Y': 5.0/2
         }
         assert globals == expected
 

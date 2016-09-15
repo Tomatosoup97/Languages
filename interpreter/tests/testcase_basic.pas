@@ -15,6 +15,6 @@ BEGIN
    { Comment }
    x := 11;
    y := 5 / 2;
+   str := 'abc';
    bool := True;
-   str := 2;
 END.
