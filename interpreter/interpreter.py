@@ -19,10 +19,9 @@ class NodeVisitor(object):
 
 class Interpreter(NodeVisitor):
 
-    GLOBAL_SCOPE = {}
-
     def __init__(self, parser):
         self.parser = parser
+        self.GLOBAL_SCOPE = {}
 
     def visit_Program(self, node):
         self.visit(node.block)

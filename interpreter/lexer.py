@@ -136,7 +136,7 @@ class Lexer(object):
                 self.next(); self.next()
                 return Token(ASSIGN, ':=')
 
-            if self.current_char is '\'':
+            if self.current_char == '\'':
                 self.next()
                 return self.string()
 

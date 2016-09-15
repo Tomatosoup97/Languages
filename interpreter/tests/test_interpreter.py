@@ -102,6 +102,29 @@ class InterpreterTestCase(unittest.TestCase):
         }
         assert globals == expected
 
+    def test_string_and_bool(self):
+        text = """\
+            PROGRAM testing;
+            VAR
+               bool       : BOOLEAN;
+               str        : STRING;
+            BEGIN
+               BEGIN
+                  bool := True;
+                  str := 'abc';
+               END;
+               str := 'xyz';
+            END.
+        """
+        interpreter = InterpreterFactory(text)
+        interpreter.interpret()
+
+        globals = interpreter.GLOBAL_SCOPE
+        expected = {
+            'STR': 'xyz', 'BOOL': True,
+        }
+        print(globals)
+        assert globals == expected
 
 if __name__ == '__main__':
     unittest.main()

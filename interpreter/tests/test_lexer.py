@@ -21,6 +21,7 @@ class LexerTestCase(unittest.TestCase):
             ('.', DOT, '.'),
             ('NUMBER', ID, 'NUMBER'),
             (';', SEMI, ';'),
+            ("'abc'", STRING_CONST, 'abc'),
             ('BEGIN', BEGIN, 'BEGIN'),
             ('END', END, 'END'),
         )
