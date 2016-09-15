@@ -16,5 +16,5 @@ BEGIN
    x := 11;
    y := 5 / 2;
    bool := True;
-   str := 'abc';
+   str := 2;
 END.

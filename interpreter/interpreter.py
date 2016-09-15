@@ -3,7 +3,7 @@
 from parser import Parser
 from lexer import Lexer
 from tokens import *
-from exceptions import NoSuchVisitorException
+from excepts import NoSuchVisitorException
 
 
 class NodeVisitor(object):

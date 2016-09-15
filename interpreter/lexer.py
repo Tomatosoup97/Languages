@@ -1,7 +1,7 @@
 import re
 
 from tokens import *
-from exceptions import LexerException
+from excepts import LexerException
 
 
 class Token(object):
