@@ -22,12 +22,17 @@ RESERVED_KEYWORDS = {
     'PROGRAM': Token('PROGRAM', 'PROGRAM'),
     'BEGIN': Token('BEGIN', 'BEGIN'),
     'END': Token('END', 'END'),
+    
+    'IF': Token('IF', 'IF'),
+    'ELSE': Token('ELSE', 'ELSE'),
+
     'DIV': Token('INTEGER_DIV', 'DIV'),
     'VAR': Token('VAR', 'VAR'),
     'INTEGER': Token('INTEGER', 'INTEGER'),
     'REAL': Token('REAL', 'REAL'),
     'STRING': Token('STRING', 'STRING'),
     'BOOLEAN': Token('BOOLEAN', 'BOOLEAN'),
+    
     'TRUE': Token('TRUE', 'True'),
     'FALSE': Token('FALSE', 'False'),
 }
@@ -139,6 +144,30 @@ class Lexer(object):
             if self.current_char == '\'':
                 self.next()
                 return self.string()
+
+            if self.current_char is '=':
+                self.next()
+                return Token(EQ, '=')
+
+            if self.current_char is '<':
+                """ NE, LTE, LT """
+                self.next();
+                if self.current_char is '>':
+                    self.next()
+                    return Token(NE, '<>')
+                elif self.current_char is '=':
+                    self.next()
+                    return Token(LTE, '<=')
+                else:
+                    return Token(LT, '<')
+
+            if self.current_char is '>':
+                """ GTE, GT """
+                self.next()
+                if self.current_char is '=':
+                    return Token(GTE, '>=')
+                else:
+                    return Token(GT, '>')
 
             if self.current_char is ';':
                 self.next()

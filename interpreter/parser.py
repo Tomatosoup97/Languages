@@ -113,22 +113,19 @@ class Parser(object):
 
     def statement(self):
         """
-        statement : compound_statement
+        statement : conditional_statement
+                  | compound_statement
                   | assignment_statement
                   | empty
         """
         if self.current_token.type == BEGIN:
             return self.compound_statement()
+        if self.current_token.type == IF:
+            return self.conditional_statement()
         elif self.current_token.type == ID:
             return self.assignment_statement()
         else:
             return self.empty()
-
-    def empty(self):
-        """
-        empty :
-        """
-        return NoOp()
 
     def assignment_statement(self):
         """ 
@@ -143,6 +140,7 @@ class Parser(object):
     def expression(self):
         """
         expression : simple_expression
+                   | simple_expression relational_operator simple_expression
                    | boolean_expression
                    | string_expression
         """
@@ -152,7 +150,36 @@ class Parser(object):
         elif token.type == STRING_CONST:
             return self.string_expression()
         else:
-            return self.simple_expression()
+            node = self.simple_expression()
+            if self.current_token.type in (EQ, NE, LT, LTE, GT, GTE):
+                operator = self.relational_operator()
+                return RelOp(node, operator, self.simple_expression())
+            else:
+                return node
+
+    def relational_operator(self):
+        """
+        relational_operator : ( EQ | NE | LT | LTE | GT | GTE )
+        """
+        token = self.current_token
+        if token.type == EQ:
+            self.consume(EQ)
+            return token
+        if token.type == NE:
+            self.consume(NE)
+            return token
+        if token.type == LT:
+            self.consume(LT)
+            return token
+        if token.type == LTE:
+            self.consume(LTE)
+            return token
+        if token.type == GT:
+            self.consume(GT)
+            return token
+        if token.type == GTE:
+            self.consume(GTE)
+            return token
 
     def boolean_expression(self):
         """
@@ -251,6 +278,12 @@ class Parser(object):
         node = Var(self.current_token)
         self.consume(ID)
         return node
+
+    def empty(self):
+        """
+        empty :
+        """
+        return NoOp()
 
     def parse(self):
         node = self.program()

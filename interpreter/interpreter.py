@@ -52,6 +52,21 @@ class Interpreter(NodeVisitor):
             raise NameError(repr(var_name))
         return value
 
+    def visit_RelOp(self, node):
+        op_type = node.operator.type
+        if op_type == NE:
+            return self.visit(node.left) != self.visit(node.right)
+        if op_type == EQ:
+            return self.visit(node.left) == self.visit(node.right)
+        if op_type == LT:
+            return self.visit(node.left) < self.visit(node.right)
+        if op_type == LTE:
+            return self.visit(node.left) <= self.visit(node.right)
+        if op_type == GT:
+            return self.visit(node.left) > self.visit(node.right)
+        if op_type == GTE:
+            return self.visit(node.left) >= self.visit(node.right)
+
     def visit_BinOp(self, node):
         op_type = node.operator.type
         if op_type == PLUS:

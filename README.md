@@ -26,13 +26,14 @@ statement : compound_statement
           | assignment_statement
           | empty
 
-assignment_statement : variable ASSIGN expr
-
-empty :
+assignment_statement : variable ASSIGN expression
 
 expression : simple_expression
+           | simple_expression relational_operator simple_expression 
            | boolean_expression
            | string_expression
+
+relational_operator : ( EQ | NE | LT | LTE | GT | GTE )
 
 boolean_expression : (TRUE | FALSE)
 
@@ -46,8 +47,11 @@ factor : PLUS factor
        | MINUS factor
        | INTEGER_CONST
        | REAL_CONST
-       | LPAREN expr RPAREN
+       | LPAREN expression RPAREN
        | variable
 
 variable: ID
+
+empty :
+
 ```

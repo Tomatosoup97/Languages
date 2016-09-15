@@ -24,6 +24,13 @@ class LexerTestCase(unittest.TestCase):
             ("'abc'", STRING_CONST, 'abc'),
             ('BEGIN', BEGIN, 'BEGIN'),
             ('END', END, 'END'),
+            ('>', GT, '>'),
+            ('<', LT, '<'),
+            ('<=', LTE, '<='),
+            ('>=', GTE, '>='),
+            ('=', EQ, '='),
+            ('<>', NE, '<>'),
+            ('END', END, 'END'),
         )
         for text, tok_type, tok_val in records:
             lexer = LexerFactory(text)

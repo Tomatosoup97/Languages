@@ -51,7 +51,7 @@ class InterpreterTestCase(unittest.TestCase):
             globals = interpreter.GLOBAL_SCOPE
             self.assertEqual(globals['A'], result)
 
-    def test_expression_invalid_syntax_01(self):
+    def test_expression_invalid_syntax_bin_op(self):
         interpreter = InterpreterFactory(
             """
             PROGRAM Test;
@@ -63,7 +63,7 @@ class InterpreterTestCase(unittest.TestCase):
         with self.assertRaises(Exception):
             interpreter.interpret()
 
-    def test_expression_invalid_syntax_02(self):
+    def test_expression_invalid_syntax_no_bin_op(self):
         interpreter = InterpreterFactory(
             """
             PROGRAM Test;
@@ -75,7 +75,7 @@ class InterpreterTestCase(unittest.TestCase):
         with self.assertRaises(Exception):
             interpreter.interpret()
 
-    def test_program(self):
+    def test_numbers(self):
         text = """\
             PROGRAM testing;
             VAR
@@ -123,8 +123,29 @@ class InterpreterTestCase(unittest.TestCase):
         expected = {
             'STR': 'xyz', 'BOOL': True,
         }
-        print(globals)
         assert globals == expected
+
+    def test_rel_op(self):
+        text = """\
+            PROGRAM testing;
+            VAR
+               bool       : BOOLEAN;
+               another    : BOOLEAN;
+               helper     : INTEGER;
+            BEGIN
+                BEGIN
+                    bool := 6 < 3 * 3;
+                END;
+                another := 12 / 2 <= 4;
+            END.
+        """
+        interpreter = InterpreterFactory(text)
+        interpreter.interpret()
+
+        globals = interpreter.GLOBAL_SCOPE
+        expected = {'BOOL': True, 'ANOTHER': False}
+        assert globals == expected
+
 
 if __name__ == '__main__':
     unittest.main()

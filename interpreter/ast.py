@@ -50,6 +50,13 @@ class Var(AST):
         self.value = token.value
 
 
+class RelOp(AST):
+    def __init__(self, left, operator, right):
+        self.left = left
+        self.token = self.operator = operator
+        self.right = right
+
+
 class BinOp(AST):
     def __init__(self, left, operator, right):
         self.left = left

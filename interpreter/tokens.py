@@ -20,6 +20,10 @@ ID = 'ID'
 ASSIGN = 'ASSIGN'
 SEMI, COLON, DOT, COMMA,  = ('SEMI', 'COLON', 'DOT', 'COMMA')
 
+NE, EQ, LT, LTE, GT, GTE = ('NE', 'EQ', 'LT', 'LTE', 'GT', 'GTE')
+
+IF, ELSE = ('IF', 'ELSE')
+
 BEGIN, END = ('BEGIN', 'END')
 PROGRAM = 'PROGRAM'
 VAR = 'VAR'
