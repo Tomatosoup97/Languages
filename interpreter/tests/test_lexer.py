@@ -33,6 +33,7 @@ class LexerTestCase(unittest.TestCase):
             ('END', END, 'END'),
             ('IF', IF, 'IF'),
             ('THEN', THEN, 'THEN'),
+            ('WRITELN', WRITELN, 'WRITELN'),
         )
         for text, tok_type, tok_val in records:
             lexer = LexerFactory(text)

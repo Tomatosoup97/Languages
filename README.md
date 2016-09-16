@@ -24,10 +24,13 @@ statement_list : statement
 statement : conditional_statement
           | compound_statement
           | assignment_statement
+          | writeln_statement
           | empty
 
-conditional_statement : if expr then statement
-                      | if expr then statement else statement
+writeln_statement : writeln LPAREN expr (COMMA expr)* RPAREN
+
+conditional_statement : IF expr THEN statement
+                      | IF expr THEN statement else statement
 
 assignment_statement : variable ASSIGN expr
 

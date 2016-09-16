@@ -116,16 +116,34 @@ class Parser(object):
         statement : conditional_statement
                   | compound_statement
                   | assignment_statement
+                  | writeln_statement
                   | empty
         """
         if self.current_token.type == BEGIN:
             return self.compound_statement()
+        if self.current_token.type == WRITELN:
+            return self.writeln_statement()
         if self.current_token.type == IF:
             return self.conditional_statement()
         elif self.current_token.type == ID:
             return self.assignment_statement()
         else:
             return self.empty()
+
+    def writeln_statement(self):
+        """
+        writeln_statement : writeln LPAREN expr (COMMA expr)* RPAREN
+        """
+        self.consume(WRITELN)
+        self.consume(LPAREN)
+        node = self.expr()
+        if self.current_token.type == RPAREN:
+            node = Writeln(node)
+        while self.current_token.type == COMMA:
+            self.consume(COMMA)
+            node = Writeln(node, self.expr())
+        self.consume(RPAREN)
+        return node
 
     def conditional_statement(self):
         """
@@ -155,9 +173,9 @@ class Parser(object):
     def expr(self):
         """
         expr : simple_expr
-                   | simple_expr relational_operator simple_expr
-                   | boolean_expr
-                   | string_expr
+             | simple_expr relational_operator simple_expr
+             | boolean_expr
+             | string_expr
         """
         token = self.current_token
         if token.type in (TRUE, FALSE):

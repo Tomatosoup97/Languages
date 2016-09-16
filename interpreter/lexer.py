@@ -22,6 +22,7 @@ RESERVED_KEYWORDS = {
     'PROGRAM': Token('PROGRAM', 'PROGRAM'),
     'BEGIN': Token('BEGIN', 'BEGIN'),
     'END': Token('END', 'END'),
+    'WRITELN': Token('WRITELN', 'WRITELN'),
     
     'IF': Token('IF', 'IF'),
     'ELSE': Token('ELSE', 'ELSE'),

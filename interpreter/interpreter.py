@@ -43,6 +43,14 @@ class Interpreter(NodeVisitor):
         else:
             pass
 
+    def visit_Writeln(self, node):
+        first = self.visit(node.first)
+        if first:
+            print(first)
+        if node.second:
+            second = self.visit(node.second)
+            print(second)
+
     def visit_Assign(self, node):
         var_name = node.left.value
         self.GLOBAL_SCOPE[var_name] = self.visit(node.right)

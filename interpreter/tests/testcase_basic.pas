@@ -16,5 +16,7 @@ BEGIN
    x := 11;
    y := 5 / 2;
    str := 'abc';
+   writeln('tomatosoup');
+   writeln('a', 'b', 'c');
    bool := True;
 END.

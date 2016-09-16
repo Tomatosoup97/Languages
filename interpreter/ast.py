@@ -35,6 +35,12 @@ class Condition(AST):
         self.otherwise = otherwise
 
 
+class Writeln(AST):
+    def __init__(self, first, second=''):
+        self.first = first
+        self.second = second
+
+
 class Assign(AST):
     def __init__(self, left, operator, right):
         self.left = left
