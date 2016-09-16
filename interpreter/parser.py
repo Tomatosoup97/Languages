@@ -129,10 +129,18 @@ class Parser(object):
 
     def conditional_statement(self):
         """
-        conditional_statement : if then statement
+        conditional_statement : if expr then statement
                               | if expr then statement else statement
         """
-        pass
+        self.consume(IF)
+        condition = self.expr()
+        self.consume(THEN)
+        statement = self.statement()
+        otherwise = ''
+        if self.current_token.type == ELSE:
+            self.consume(ELSE)
+            otherwise = self.statement()
+        return Condition(condition, statement, otherwise)
 
     def assignment_statement(self):
         """ 

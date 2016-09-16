@@ -25,6 +25,16 @@ class Compound(AST):
         self.children = []
 
 
+class Condition(AST):
+    """
+    If-else statement
+    """
+    def __init__(self, condition, statement, otherwise=''):
+        self.condition = condition
+        self.statement = statement
+        self.otherwise = otherwise
+
+
 class Assign(AST):
     def __init__(self, left, operator, right):
         self.left = left

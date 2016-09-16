@@ -146,6 +146,35 @@ class InterpreterTestCase(unittest.TestCase):
         expected = {'BOOL': True, 'ANOTHER': False}
         assert globals == expected
 
+    def test_conditional_statement(self):
+        text = """\
+            PROGRAM testing;
+            VAR
+               bool       : BOOLEAN;
+               a          : INTEGER;
+               b          : STRING;
+            BEGIN
+                BEGIN
+                    bool := 6 < 10;
+                    if bool then
+                      a := 5
+                    else
+                      a := 10
+                END;
+                if 2 <> 2 then
+                  b := 'two isnt two'
+                else
+                  b := 'two is two'
+            END.
+        """
+        interpreter = InterpreterFactory(text)
+        interpreter.interpret()
+
+        globals = interpreter.GLOBAL_SCOPE
+        print(globals)
+        expected = {'B': 'two is two', 'A': 5, 'BOOL': True}
+        assert globals == expected
+
 
 if __name__ == '__main__':
     unittest.main()

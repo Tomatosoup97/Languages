@@ -35,6 +35,14 @@ class Interpreter(NodeVisitor):
         for child in node.children:
             self.visit(child)
 
+    def visit_Condition(self, node):
+        if self.visit(node.condition):
+            self.visit(node.statement)
+        elif node.otherwise:
+            self.visit(node.otherwise)
+        else:
+            pass
+
     def visit_Assign(self, node):
         var_name = node.left.value
         self.GLOBAL_SCOPE[var_name] = self.visit(node.right)

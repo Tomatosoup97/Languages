@@ -25,6 +25,7 @@ RESERVED_KEYWORDS = {
     
     'IF': Token('IF', 'IF'),
     'ELSE': Token('ELSE', 'ELSE'),
+    'THEN': Token('THEN', 'THEN'),
 
     'DIV': Token('INTEGER_DIV', 'DIV'),
     'VAR': Token('VAR', 'VAR'),
