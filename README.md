@@ -2,8 +2,7 @@
 
 Simple pascal interpreter written in python
 
-## Grammar:
-
+## BNF Grammar:
 
 ```
 program : PROGRAM variable SEMI block DOT
@@ -33,9 +32,9 @@ conditional_statement : if expr then statement
 assignment_statement : variable ASSIGN expr
 
 expr : simple_expr
-           | simple_expr relational_operator simple_expr 
-           | boolean_expr
-           | string_expr
+     | simple_expr relational_operator simple_expr 
+     | boolean_expr
+     | string_expr
 
 relational_operator : ( EQ | NE | LT | LTE | GT | GTE )
 
