@@ -22,24 +22,28 @@ compound_statement : BEGIN statement_list END
 statement_list : statement
                | statement SEMI statement_list
 
-statement : compound_statement
+statement : conditional_statement
+          | compound_statement
           | assignment_statement
           | empty
 
-assignment_statement : variable ASSIGN expression
+conditional_statement : if expr then statement
+                      | if expr then statement else statement
 
-expression : simple_expression
-           | simple_expression relational_operator simple_expression 
-           | boolean_expression
-           | string_expression
+assignment_statement : variable ASSIGN expr
+
+expr : simple_expr
+           | simple_expr relational_operator simple_expr 
+           | boolean_expr
+           | string_expr
 
 relational_operator : ( EQ | NE | LT | LTE | GT | GTE )
 
-boolean_expression : (TRUE | FALSE)
+boolean_expr : (TRUE | FALSE)
 
-string_expression : STRING_CONST
+string_expr : STRING_CONST
 
-simple_expression : term ((PLUS | MINUS) term)*
+simple_expr : term ((PLUS | MINUS) term)*
 
 term : factor ((MUL | INTEGER_DIV | FLOAT_DIV) factor)*
 
@@ -47,7 +51,7 @@ factor : PLUS factor
        | MINUS factor
        | INTEGER_CONST
        | REAL_CONST
-       | LPAREN expression RPAREN
+       | LPAREN expr RPAREN
        | variable
 
 variable: ID

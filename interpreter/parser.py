@@ -127,33 +127,40 @@ class Parser(object):
         else:
             return self.empty()
 
+    def conditional_statement(self):
+        """
+        conditional_statement : if then statement
+                              | if expr then statement else statement
+        """
+        pass
+
     def assignment_statement(self):
         """ 
-        assignment_statement : variable ASSIGN expression
+        assignment_statement : variable ASSIGN expr
         """
         left = self.variable()
         token = self.current_token
         self.consume(ASSIGN)
-        right = self.expression()
+        right = self.expr()
         return Assign(left, token, right)
 
-    def expression(self):
+    def expr(self):
         """
-        expression : simple_expression
-                   | simple_expression relational_operator simple_expression
-                   | boolean_expression
-                   | string_expression
+        expr : simple_expr
+                   | simple_expr relational_operator simple_expr
+                   | boolean_expr
+                   | string_expr
         """
         token = self.current_token
         if token.type in (TRUE, FALSE):
-            return self.boolean_expression()
+            return self.boolean_expr()
         elif token.type == STRING_CONST:
-            return self.string_expression()
+            return self.string_expr()
         else:
-            node = self.simple_expression()
+            node = self.simple_expr()
             if self.current_token.type in (EQ, NE, LT, LTE, GT, GTE):
                 operator = self.relational_operator()
-                return RelOp(node, operator, self.simple_expression())
+                return RelOp(node, operator, self.simple_expr())
             else:
                 return node
 
@@ -181,9 +188,9 @@ class Parser(object):
             self.consume(GTE)
             return token
 
-    def boolean_expression(self):
+    def boolean_expr(self):
         """
-        boolean_expression : (TRUE | FALSE)
+        boolean_expr : (TRUE | FALSE)
         """
         token = self.current_token
         if token.type == TRUE:
@@ -194,18 +201,18 @@ class Parser(object):
             self.consume(FALSE)
             return Boolean(token)
 
-    def string_expression(self):
+    def string_expr(self):
         """
-        string_expression : STRING_CONST
+        string_expr : STRING_CONST
         """
         token = self.current_token
         if token.type == STRING_CONST:
             self.consume(STRING_CONST)
             return String(token)
 
-    def simple_expression(self):
+    def simple_expr(self):
         """
-        simple_expression : term ((PLUS | MINUS) term)*
+        simple_expr : term ((PLUS | MINUS) term)*
         """
         node = self.term()
 
@@ -243,7 +250,7 @@ class Parser(object):
                | MINUS factor
                | INTEGER_CONST
                | REAL_CONST
-               | LPAREN expression RPAREN
+               | LPAREN expr RPAREN
                | variable
         """
         token = self.current_token
@@ -265,7 +272,7 @@ class Parser(object):
 
         elif token.type == LPAREN:
             self.consume(LPAREN)
-            node = self.simple_expression()
+            node = self.simple_expr()
             self.consume(RPAREN)
             return node
         else:

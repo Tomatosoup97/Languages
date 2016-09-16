@@ -5,7 +5,7 @@ from .factories import InterpreterFactory
 
 
 class InterpreterTestCase(unittest.TestCase):
-    def test_integer_arithmetic_expressions(self):
+    def test_integer_arithmetic_exprs(self):
         for expr, result in (
             ('3', 3),
             ('2 + 7 * 4', 30),
@@ -32,7 +32,7 @@ class InterpreterTestCase(unittest.TestCase):
             globals = interpreter.GLOBAL_SCOPE
             self.assertEqual(globals['A'], result)
 
-    def test_float_arithmetic_expressions(self):
+    def test_float_arithmetic_exprs(self):
         for expr, result in (
             ('3.14', 3.14),
             ('2.14 + 7 * 4', 30.14),
@@ -51,7 +51,7 @@ class InterpreterTestCase(unittest.TestCase):
             globals = interpreter.GLOBAL_SCOPE
             self.assertEqual(globals['A'], result)
 
-    def test_expression_invalid_syntax_bin_op(self):
+    def test_expr_invalid_syntax_bin_op(self):
         interpreter = InterpreterFactory(
             """
             PROGRAM Test;
@@ -63,7 +63,7 @@ class InterpreterTestCase(unittest.TestCase):
         with self.assertRaises(Exception):
             interpreter.interpret()
 
-    def test_expression_invalid_syntax_no_bin_op(self):
+    def test_expr_invalid_syntax_no_bin_op(self):
         interpreter = InterpreterFactory(
             """
             PROGRAM Test;
