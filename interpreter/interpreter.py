@@ -40,8 +40,14 @@ class Interpreter(NodeVisitor):
             self.visit(node.statement)
         elif node.otherwise:
             self.visit(node.otherwise)
-        else:
-            pass
+
+    def visit_ForLoop(self, node):
+        self.visit(node.identifier)
+        var = self.GLOBAL_SCOPE[node.identifier.left.value]
+        boundary = self.visit(node.boundary) + 1
+        for i in range(var, boundary):
+            self.GLOBAL_SCOPE[node.identifier.left.value] = i
+            self.visit(node.statement)
 
     def visit_Writeln(self, node):
         first = self.visit(node.first)

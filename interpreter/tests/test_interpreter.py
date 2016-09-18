@@ -171,8 +171,27 @@ class InterpreterTestCase(unittest.TestCase):
         interpreter.interpret()
 
         globals = interpreter.GLOBAL_SCOPE
-        print(globals)
         expected = {'B': 'two is two', 'A': 5, 'BOOL': True}
+        assert globals == expected
+
+    def test_forloop_statement(self):
+        text = """\
+            PROGRAM testing;
+            VAR
+               a          : INTEGER;
+            BEGIN
+                a := 5;
+                for i := 1 to a do 
+                BEGIN
+                  i := i * 10
+                END;
+            END.
+        """
+        interpreter = InterpreterFactory(text)
+        interpreter.interpret()
+
+        globals = interpreter.GLOBAL_SCOPE
+        expected = {'A': 5, 'I': 50}
         assert globals == expected
 
 

@@ -115,6 +115,7 @@ class Parser(object):
         """
         statement : conditional_statement
                   | compound_statement
+                  | forloop_statement
                   | assignment_statement
                   | writeln_statement
                   | empty
@@ -127,6 +128,8 @@ class Parser(object):
             return self.conditional_statement()
         elif self.current_token.type == ID:
             return self.assignment_statement()
+        elif self.current_token.type == FOR:
+            return self.forloop_statement()
         else:
             return self.empty()
 
@@ -159,6 +162,18 @@ class Parser(object):
             self.consume(ELSE)
             otherwise = self.statement()
         return Condition(condition, statement, otherwise)
+
+    def forloop_statement(self):
+        """
+        forloop_statement : FOR assignment_statement TO expr DO statement
+        """
+        self.consume(FOR)
+        identifier = self.assignment_statement()
+        self.consume(TO)
+        boundary = self.expr()
+        self.consume(DO)
+        statement = self.statement()
+        return ForLoop(identifier, boundary, statement)
 
     def assignment_statement(self):
         """ 

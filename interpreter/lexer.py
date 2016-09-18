@@ -34,6 +34,10 @@ RESERVED_KEYWORDS = {
     'REAL': Token('REAL', 'REAL'),
     'STRING': Token('STRING', 'STRING'),
     'BOOLEAN': Token('BOOLEAN', 'BOOLEAN'),
+
+    'FOR': Token('FOR', 'FOR'),
+    'TO': Token('TO', 'TO'),
+    'DO': Token('DO', 'DO'),
     
     'TRUE': Token('TRUE', 'True'),
     'FALSE': Token('FALSE', 'False'),

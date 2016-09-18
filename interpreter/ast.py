@@ -26,13 +26,20 @@ class Compound(AST):
 
 
 class Condition(AST):
-    """
+    """ s
     If-else statement
     """
     def __init__(self, condition, statement, otherwise=''):
         self.condition = condition
         self.statement = statement
         self.otherwise = otherwise
+
+
+class ForLoop(AST):
+    def __init__(self, identifier, boundary, statement):
+        self.identifier = identifier
+        self.boundary = boundary 
+        self.statement = statement
 
 
 class Writeln(AST):

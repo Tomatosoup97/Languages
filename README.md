@@ -23,6 +23,7 @@ statement_list : statement
 
 statement : conditional_statement
           | compound_statement
+          | forloop_statement
           | assignment_statement
           | writeln_statement
           | empty
@@ -31,6 +32,8 @@ writeln_statement : writeln LPAREN expr (COMMA expr)* RPAREN
 
 conditional_statement : IF expr THEN statement
                       | IF expr THEN statement else statement
+
+forloop_statement : FOR assignment_statement TO expr DO statement
 
 assignment_statement : variable ASSIGN expr
 

@@ -23,6 +23,7 @@ SEMI, COLON, DOT, COMMA,  = ('SEMI', 'COLON', 'DOT', 'COMMA')
 NE, EQ, LT, LTE, GT, GTE = ('NE', 'EQ', 'LT', 'LTE', 'GT', 'GTE')
 
 IF, ELSE, THEN = ('IF', 'ELSE', 'THEN')
+FOR, TO, DO = ('FOR', 'TO', 'DO')
 
 BEGIN, END = ('BEGIN', 'END')
 PROGRAM = 'PROGRAM'
