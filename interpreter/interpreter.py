@@ -14,7 +14,7 @@ class NodeVisitor(object):
 
     def generic_visit(self, node):
         raise NoSuchVisitorException(
-                'No visit_{} method'.format(type(node).__name__))
+            'No visit_{} method'.format(type(node).__name__))
 
 
 class Interpreter(NodeVisitor):
@@ -106,7 +106,7 @@ class Interpreter(NodeVisitor):
         op_type = node.operator.type
         if op_type == PLUS:
             return +self.visit(node.expr)
-        elif op_type == MINUS: 
+        elif op_type == MINUS:
             return -self.visit(node.expr)
 
     def visit_NoOp(self, node):
@@ -129,7 +129,7 @@ class Interpreter(NodeVisitor):
 def main():
     import sys
     text = open(sys.argv[1], 'r').read()
-    
+
     lexer = Lexer(text)
     parser = Parser(lexer)
     interpreter = Interpreter(parser)

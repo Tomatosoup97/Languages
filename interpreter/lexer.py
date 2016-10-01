@@ -23,7 +23,7 @@ RESERVED_KEYWORDS = {
     'BEGIN': Token('BEGIN', 'BEGIN'),
     'END': Token('END', 'END'),
     'WRITELN': Token('WRITELN', 'WRITELN'),
-    
+
     'IF': Token('IF', 'IF'),
     'ELSE': Token('ELSE', 'ELSE'),
     'THEN': Token('THEN', 'THEN'),
@@ -38,7 +38,7 @@ RESERVED_KEYWORDS = {
     'FOR': Token('FOR', 'FOR'),
     'TO': Token('TO', 'TO'),
     'DO': Token('DO', 'DO'),
-    
+
     'TRUE': Token('TRUE', 'True'),
     'FALSE': Token('FALSE', 'False'),
 }
@@ -58,7 +58,7 @@ class Lexer(object):
 
     def next(self):
         """
-        Set pointer to next character 
+        Set pointer to next character
         """
         self.position += 1
         if self.position > len(self.text) - 1:
@@ -71,7 +71,7 @@ class Lexer(object):
         Check what next char will be without advancing position
         """
         peek_pos = self.position + 1
-        if peek_pos > len(self.text) -1:
+        if peek_pos > len(self.text) - 1:
             return None
         return self.text[peek_pos]
 
@@ -95,7 +95,7 @@ class Lexer(object):
     def skip_comment(self):
         while self.current_char != '}':
             self.next()
-        self.next() # the closing curly brace
+        self.next()  # the closing curly brace
 
     def integer(self):
         result = ''
@@ -123,7 +123,7 @@ class Lexer(object):
         return Token(STRING_CONST, result)
 
     def get_next_token(self):
-        """ 
+        """
         Lexical anaylzer (tokenizer)
         Breaks sentence apart into tokens
         """
@@ -144,7 +144,8 @@ class Lexer(object):
                 return self.number()
 
             if self.current_char is ':' and self.peek() == '=':
-                self.next(); self.next()
+                self.next()
+                self.next()
                 return Token(ASSIGN, ':=')
 
             if self.current_char == '\'':
@@ -157,7 +158,7 @@ class Lexer(object):
 
             if self.current_char is '<':
                 """ NE, LTE, LT """
-                self.next();
+                self.next()
                 if self.current_char is '>':
                     self.next()
                     return Token(NE, '<>')

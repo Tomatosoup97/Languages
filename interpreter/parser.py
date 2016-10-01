@@ -36,14 +36,14 @@ class Parser(object):
         return Program(program_name, block_node)
 
     def block(self):
-        """ 
+        """
         block : declarations compound_statement
         """
         return Block(self.declarations(), self.compound_statement())
 
     def declarations(self):
         """
-        declarations : VAR (variable_declaration SEMI)+ 
+        declarations : VAR (variable_declaration SEMI)+
                      | empty
         """
         declarations = []
@@ -62,7 +62,7 @@ class Parser(object):
         while self.current_token.type == COMMA:
             self.consume(COMMA)
             variables.append(self.variable())
-        
+
         self.consume(COLON)
         var_type = self.type_spec()
         var_declarations = [
@@ -176,7 +176,7 @@ class Parser(object):
         return ForLoop(identifier, boundary, statement)
 
     def assignment_statement(self):
-        """ 
+        """
         assignment_statement : variable ASSIGN expr
         """
         left = self.variable()
@@ -287,7 +287,7 @@ class Parser(object):
 
     def factor(self):
         """
-        factor : PLUS  factor 
+        factor : PLUS  factor
                | MINUS factor
                | INTEGER_CONST
                | REAL_CONST

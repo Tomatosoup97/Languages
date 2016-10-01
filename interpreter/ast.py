@@ -1,5 +1,4 @@
 
-
 class AST(object):
     """Abstract Syntax Tree """
     pass
@@ -38,7 +37,7 @@ class Condition(AST):
 class ForLoop(AST):
     def __init__(self, identifier, boundary, statement):
         self.identifier = identifier
-        self.boundary = boundary 
+        self.boundary = boundary
         self.statement = statement
 
 
