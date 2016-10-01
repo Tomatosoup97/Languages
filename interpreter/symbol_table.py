@@ -80,8 +80,7 @@ class SymbolTableBuilder(NodeVisitor):
         self.visit(node.statement)
 
     def visit_Writeln(self, node):
-        self.visit(node.first)
-        self.visit(node.second)
+        pass
 
     def visit_Assign(self, node):
         var_name = node.left.value
@@ -92,9 +91,9 @@ class SymbolTableBuilder(NodeVisitor):
         self.visit(node.right)
 
     def visit_VarDecl(self, node):
-        type_name = node.type_node.value
+        type_name = node.type.value
         type_symbol = self.symtab.lookup(type_name)
-        var_name = node.var_node.value
+        var_name = node.var.value
         var_symbol = VarSymbol(var_name, type_symbol)
         self.symtab.define(var_symbol)
 

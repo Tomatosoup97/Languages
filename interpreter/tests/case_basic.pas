@@ -5,8 +5,9 @@ VAR
    y          : REAL;
    str        : STRING;
    on_fire    : BOOLEAN;
+   i          : INTEGER;
 BEGIN
-   BEGIN 
+   BEGIN
       number := 2;
       a := number;
       b := 10 * a + 10 * number DIV 4;

@@ -4,11 +4,12 @@ from parser import Parser
 from lexer import Lexer
 from tokens import *
 from node_visitor import NodeVisitor
+from symbol_table import SymbolTableBuilder
 
 
 class Interpreter(NodeVisitor):
-    def __init__(self, parser):
-        self.parser = parser
+    def __init__(self, tree):
+        self.tree = tree
         self.GLOBAL_SCOPE = {}
 
     def visit_Program(self, node):
@@ -110,8 +111,9 @@ class Interpreter(NodeVisitor):
         return node.value
 
     def interpret(self):
-        tree = self.parser.parse()
-        return self.visit(tree)
+        if self.tree is None:
+            return ''
+        return self.visit(self.tree)
 
 
 def main():
@@ -120,8 +122,16 @@ def main():
 
     lexer = Lexer(text)
     parser = Parser(lexer)
-    interpreter = Interpreter(parser)
+    tree = parser.parse()
+
+    symtab = SymbolTableBuilder()
+    symtab.build(tree)
+    print('\nSymbol table: ')
+    print(symtab.symtab)
+
+    interpreter = Interpreter(tree)
     interpreter.interpret()
+    print('\nGlobal scope: ')
     print(interpreter.GLOBAL_SCOPE)
 
 
