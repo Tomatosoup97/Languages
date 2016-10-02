@@ -15,6 +15,9 @@ declarations : VAR (variable_declaration SEMI)+
 variable_declaration : ID (COMMA ID)* COLON type_spec
 
 type_spec : INTEGER
+          | REAL
+          | STRING
+          | BOOLEAN
 
 compound_statement : BEGIN statement_list END
 
