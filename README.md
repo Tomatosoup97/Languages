@@ -7,7 +7,7 @@ Simple pascal interpreter written in python
 ```
 program : PROGRAM variable SEMI block DOT
 
-block : declarations compound_statement
+block : declarations subprograms compound_statement
 
 declarations : VAR (variable_declaration SEMI)+
              | empty
@@ -18,6 +18,20 @@ type_spec : INTEGER
           | REAL
           | STRING
           | BOOLEAN
+
+subprograms : (function_declaration | procedure_declaration)*
+
+function_declaration : function_head block SEMI
+
+function_head : FUNCTION parameters COLON type_spec SEMI
+
+procedure_declaration : procedure_head block SEMI
+
+procedure_head : PROCEDURE parameters SEMI
+
+parameters : LPAREN arguments (SEMI arguments)* RPAREN
+
+arguments : ID (COMMA ID)* COLON type_spec
 
 compound_statement : BEGIN statement_list END
 
