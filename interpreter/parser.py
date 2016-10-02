@@ -37,8 +37,9 @@ class Parser(object):
 
     def block(self):
         """
-        block : declarations compound_statement
+        block : declarations subprograms compound_statement
         """
+        self.subprograms()
         return Block(self.declarations(), self.compound_statement())
 
     def declarations(self):
@@ -53,6 +54,77 @@ class Parser(object):
                 declarations.extend(self.variable_declaration())
                 self.consume(SEMI)
         return declarations
+
+    def subprograms(self):
+        """
+        subprograms : (function_declaration | procedure_declaration)*
+        """
+        while self.current_token in (FUNCTION, PROCEDURE):
+            if self.current_token.type == FUNCTION:
+                self.function_declaration()
+            if self.current_token.type == PROCEDURE:
+                self.procedure_declaration()
+
+    def function_declaration(self):
+        """
+        function_declaration : function_head block SEMI
+        """
+        # TODO declare function
+        self.function_head()
+        self.block()
+        self.consume(SEMI)
+
+    def function_head(self):
+        """
+        function_head : FUNCTION ID parameters COLON type_spec SEMI
+        """
+        self.consume(FUNCTION)
+        # TODO match function with name
+        self.parameters()
+        self.consume(COLON)
+        self.type_spec()
+        self.consume(SEMI)
+
+    def procedure_declaration(self):
+        """
+        procedure_declaration : procedure_head block SEMI
+        """
+        # TODO declare procedure
+        self.procedure_head()
+        self.block()
+        self.consume(SEMI)
+
+    def procedure_head(self):
+        """
+        procedure_head : PROCEDURE ID parameters SEMI
+        """
+        self.consume(PROCEDURE)
+        # TODO match procedure with name
+        self.parameters()
+        self.consume(SEMI)
+
+    def parameters(self):
+        """
+        parameters : LPAREN arguments (SEMI arguments)* RPAREN
+        """
+        self.consume(LPAREN)
+        self.arguments()
+        while self.current_token.type == SEMI:
+            self.consume(SEMI)
+            self.arguments()
+        self.consume(RPAREN)
+
+    def arguments(self):
+        """
+        arguments : ID (COMMA ID)* COLON type_spec
+        """
+        # TODO declare variable
+        while self.current_token.type == COMMA:
+            self.consume(COMMA)
+            # TODO declare variable
+        self.consume(COLON)
+        # TODO match declared variables with type spec
+        var_type = self.type_spec()
 
     def variable_declaration(self):
         """

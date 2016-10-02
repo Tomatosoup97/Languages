@@ -24,6 +24,9 @@ RESERVED_KEYWORDS = {
     'END': Token('END', 'END'),
     'WRITELN': Token('WRITELN', 'WRITELN'),
 
+    'FUNCTION': Token('FUNCTION', 'FUNCTION'),
+    'PROCEDURE': Token('PROCEDURE', 'PROCEDURE'),
+
     'IF': Token('IF', 'IF'),
     'ELSE': Token('ELSE', 'ELSE'),
     'THEN': Token('THEN', 'THEN'),

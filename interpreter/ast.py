@@ -25,7 +25,7 @@ class Compound(AST):
 
 
 class Condition(AST):
-    """ s
+    """
     If-else statement
     """
     def __init__(self, condition, statement, otherwise=''):
