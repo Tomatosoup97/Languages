@@ -1,3 +1,6 @@
+"""Lexer tokens
+"""
+
 EOF = 'EOF'
 
 INTEGER = 'INTEGER'

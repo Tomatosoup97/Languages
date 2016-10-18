@@ -45,6 +45,9 @@ RESERVED_KEYWORDS = {
 
 
 class Lexer(object):
+    """
+    Tokenize string text input. 
+    """
     def __init__(self, text):
         self.text = text
         self.position = 0
@@ -95,7 +98,7 @@ class Lexer(object):
     def skip_comment(self):
         while self.current_char != '}':
             self.next()
-        self.next()  # the closing curly brace
+        self.next()  # closing curly brace
 
     def integer(self):
         result = ''
@@ -157,7 +160,7 @@ class Lexer(object):
                 return Token(EQ, '=')
 
             if self.current_char is '<':
-                """ NE, LTE, LT """
+                # NE, LTE, LT
                 self.next()
                 if self.current_char is '>':
                     self.next()
@@ -169,7 +172,7 @@ class Lexer(object):
                     return Token(LT, '<')
 
             if self.current_char is '>':
-                """ GTE, GT """
+                # GTE, GT
                 self.next()
                 if self.current_char is '=':
                     return Token(GTE, '>=')

@@ -1,4 +1,8 @@
-""" Pascal Interpreter """
+"""
+Pascal Interpreter
+
+Check current supported language grammar in README before use
+"""
 
 from parser import Parser
 from lexer import Lexer
@@ -98,9 +102,6 @@ class Interpreter(NodeVisitor):
         elif op_type == MINUS:
             return -self.visit(node.expr)
 
-    def visit_NoOp(self, node):
-        pass
-
     def visit_Num(self, node):
         return node.value
 
@@ -110,6 +111,9 @@ class Interpreter(NodeVisitor):
     def visit_Boolean(self, node):
         return node.value
 
+    def visit_NoOp(self, node):
+        pass
+
     def interpret(self):
         if self.tree is None:
             return ''
@@ -117,6 +121,9 @@ class Interpreter(NodeVisitor):
 
 
 def main():
+    """
+    Pass file with pascal code to interpret.
+    """
     import sys
     text = open(sys.argv[1], 'r').read()
 
@@ -126,11 +133,13 @@ def main():
 
     symtab = SymbolTableBuilder()
     symtab.build(tree)
+    # Print for debugging
     print('\nSymbol table: ')
     print(symtab.symtab)
 
     interpreter = Interpreter(tree)
     interpreter.interpret()
+    # Print for debugging
     print('\nGlobal scope: ')
     print(interpreter.GLOBAL_SCOPE)
 

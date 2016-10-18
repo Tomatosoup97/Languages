@@ -27,6 +27,8 @@ class VarSymbol(Symbol):
 
 
 class SymbolTable(object):
+    """Table of symbols.
+    """
     def __init__(self):
         self._symbols = OrderedDict()
         self._init_builtins()
@@ -37,12 +39,16 @@ class SymbolTable(object):
             self.define(BuiltinTypeSymbol(builtin))
 
     def define(self, symbol):
-        """Procedure that defines symbol in table
+        """Procedure that defines symbol in table.
+
+        :param symbol: string
         """
         self._symbols[symbol.name] = symbol
 
     def lookup(self, name):
-        """Return symbol with given name
+        """Return symbol with given name.
+
+        :param name: string symbol name
         """
         symbol = self._symbols.get(name)
         return symbol
@@ -54,8 +60,15 @@ class SymbolTable(object):
 
 
 class SymbolTableBuilder(NodeVisitor):
+    """Table builder working as node visitor.
+    While visiting each node created needed symbols
+    """
     def __init__(self):
         self.symtab = SymbolTable()
+
+    def build(self, tree):
+        """Build symbol table."""
+        self.visit(tree)
 
     def visit_Program(self, node):
         self.visit(node.block)
@@ -129,6 +142,3 @@ class SymbolTableBuilder(NodeVisitor):
 
     def visit_Boolean(self, node):
         pass
-
-    def build(self, tree):
-        self.visit(tree)
