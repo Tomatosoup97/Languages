@@ -98,7 +98,7 @@ class InterpreterTestCase(unittest.TestCase):
 
         globals = interpreter.GLOBAL_SCOPE
         expected = {
-            'NUMBER': 2, 'A': 2, 'B': 25, 'C': 27, 'X': 11, 'Y': 5.0/2
+            'NUMBER': 2, 'A': 2, 'B': 25, 'C': 27, 'X': 11, 'Y': 5.0 / 2
         }
         assert globals == expected
 
@@ -181,7 +181,7 @@ class InterpreterTestCase(unittest.TestCase):
                a          : INTEGER;
             BEGIN
                 a := 5;
-                for i := 1 to a do 
+                for i := 1 to a do
                 BEGIN
                   i := i * 10
                 END;
