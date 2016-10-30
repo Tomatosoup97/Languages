@@ -46,7 +46,7 @@ RESERVED_KEYWORDS = {
 
 class Lexer(object):
     """
-    Tokenize string text input. 
+    Tokenize string text input.
     """
     def __init__(self, text):
         self.text = text

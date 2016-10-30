@@ -3,12 +3,12 @@ from excepts import NoSuchVisitorException
 
 class NodeVisitor(object):
     """Node visitor pattern implementation.
-    
+
     Walk by each node in structure and
     invoke function coresponding to class name
     Example:
         class name: Node
-        method: visit_Node()  
+        method: visit_Node()
     """
     def visit(self, node):
         method_name = 'visit_' + type(node).__name__

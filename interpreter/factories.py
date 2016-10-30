@@ -1,5 +1,6 @@
 from parser import Parser
 from lexer import Lexer
+from interpreter import Interpreter
 
 
 class ParserFactory(object):
@@ -19,7 +20,7 @@ class InterpreterFactory(object):
         if istree:
             tree = data
         else:
-            parser = ParserFactory(text)
-            tree = parser.parse() 
+            parser = ParserFactory(data)
+            tree = parser.parse()
         interpreter = Interpreter(tree)
         return interpreter
