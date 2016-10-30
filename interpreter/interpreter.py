@@ -4,9 +4,9 @@ Pascal Interpreter
 Check current supported language grammar in README before use
 """
 
+import tokens
 from parser import Parser
 from lexer import Lexer
-from tokens import *
 from node_visitor import NodeVisitor
 from symbol_table import SymbolTableBuilder
 
@@ -69,37 +69,37 @@ class Interpreter(NodeVisitor):
 
     def visit_RelOp(self, node):
         op_type = node.operator.type
-        if op_type == NE:
+        if op_type == tokens.NE:
             return self.visit(node.left) != self.visit(node.right)
-        if op_type == EQ:
+        if op_type == tokens.EQ:
             return self.visit(node.left) == self.visit(node.right)
-        if op_type == LT:
+        if op_type == tokens.LT:
             return self.visit(node.left) < self.visit(node.right)
-        if op_type == LTE:
+        if op_type == tokens.LTE:
             return self.visit(node.left) <= self.visit(node.right)
-        if op_type == GT:
+        if op_type == tokens.GT:
             return self.visit(node.left) > self.visit(node.right)
-        if op_type == GTE:
+        if op_type == tokens.GTE:
             return self.visit(node.left) >= self.visit(node.right)
 
     def visit_BinOp(self, node):
         op_type = node.operator.type
-        if op_type == PLUS:
+        if op_type == tokens.PLUS:
             return self.visit(node.left) + self.visit(node.right)
-        elif op_type == MINUS:
+        elif op_type == tokens.MINUS:
             return self.visit(node.left) - self.visit(node.right)
-        elif op_type == MUL:
+        elif op_type == tokens.MUL:
             return self.visit(node.left) * self.visit(node.right)
-        elif op_type == INTEGER_DIV:
+        elif op_type == tokens.INTEGER_DIV:
             return self.visit(node.left) // self.visit(node.right)
-        elif op_type == FLOAT_DIV:
+        elif op_type == tokens.FLOAT_DIV:
             return float(self.visit(node.left)) / float(self.visit(node.right))
 
     def visit_UnaryOp(self, node):
         op_type = node.operator.type
-        if op_type == PLUS:
+        if op_type == tokens.PLUS:
             return +self.visit(node.expr)
-        elif op_type == MINUS:
+        elif op_type == tokens.MINUS:
             return -self.visit(node.expr)
 
     def visit_Num(self, node):
