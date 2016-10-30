@@ -5,8 +5,7 @@ Check current supported language grammar in README before use
 """
 
 import tokens
-from parser import Parser
-from lexer import Lexer
+from factories import ParserFactory, InterpreterFactory
 from node_visitor import NodeVisitor
 from symbol_table import SymbolTableBuilder
 
@@ -122,13 +121,12 @@ class Interpreter(NodeVisitor):
 
 def main():
     """
-    Pass file with pascal code to interpret.
+    Pass file with pascal code to interpretself.
     """
     import sys
     text = open(sys.argv[1], 'r').read()
 
-    lexer = Lexer(text)
-    parser = Parser(lexer)
+    parser = ParserFactory(text)
     tree = parser.parse()
 
     symtab = SymbolTableBuilder()
@@ -137,7 +135,7 @@ def main():
     print('\nSymbol table: ')
     print(symtab.symtab)
 
-    interpreter = Interpreter(tree)
+    interpreter = InterpreterFactory(tree)
     interpreter.interpret()
     # Print for debugging
     print('\nGlobal scope: ')

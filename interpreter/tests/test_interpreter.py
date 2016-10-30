@@ -63,7 +63,7 @@ class InterpreterTestCase(unittest.TestCase):
         with self.assertRaises(Exception):
             interpreter.interpret()
 
-    def test_expr_invalid_syntax_no_bin_op(self):
+    def test_expr_invalid_syntax_no_bin_op2(self):
         interpreter = InterpreterFactory(
             """
             PROGRAM Test;

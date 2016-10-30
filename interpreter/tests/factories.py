@@ -16,4 +16,5 @@ def ParserFactory(text):
 def InterpreterFactory(text):
     lexer = Lexer(text)
     parser = Parser(lexer)
-    return Interpreter(parser)
+    tree = parser.parse()
+    return Interpreter(tree)
