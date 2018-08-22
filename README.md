@@ -10,6 +10,7 @@ program : PROGRAM variable SEMI block DOT
 block : declarations compound_statement
 
 declarations : VAR (variable_declaration SEMI)+
+             | (PROCEDURE ID SEMI block SEMI)*
              | empty
 
 variable_declaration : ID (COMMA ID)* COLON type_spec
@@ -41,7 +42,7 @@ forloop_statement : FOR assignment_statement TO expr DO statement
 assignment_statement : variable ASSIGN expr
 
 expr : simple_expr
-     | simple_expr relational_operator simple_expr 
+     | simple_expr relational_operator simple_expr
      | boolean_expr
      | string_expr
 

@@ -16,6 +16,12 @@ class Block(AST):
         self.compound_statement = compound_statement
 
 
+class ProcedureDeclaration(AST):
+    def __init__(self, proc_name, proc_body):
+        self.name = proc_name
+        self.body = proc_body
+
+
 class Compound(AST):
     """
     `BEGIN ... END` block
@@ -112,3 +118,4 @@ class Boolean(AST):
     def __init__(self, token):
         self.token = token
         self.value = bool(token.value)
+

@@ -78,6 +78,9 @@ class SymbolTableBuilder(NodeVisitor):
             self.visit(declaration)
         self.visit(node.compound_statement)
 
+    def visit_ProcedureDeclaration(self, node):
+        pass
+
     def visit_Compound(self, node):
         for child in node.children:
             self.visit(child)

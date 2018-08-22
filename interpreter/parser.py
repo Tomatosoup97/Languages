@@ -44,6 +44,7 @@ class Parser(object):
     def declarations(self):
         """
         declarations : VAR (variable_declaration SEMI)+
+                     | (PROCEDURE ID SEMI block SEMI)*
                      | empty
         """
         declarations = []
@@ -52,7 +53,22 @@ class Parser(object):
             while self.current_token.type == ID:
                 declarations.extend(self.variable_declaration())
                 self.consume(SEMI)
+        while self.current_token.type == PROCEDURE:
+            node = self.procedure_declaration()
+            declarations.append(node)
         return declarations
+
+    def procedure_declaration(self):
+        """
+        procedure_declaration : PROCEDURE ID SEMI block SEMI
+        """
+        self.consume(PROCEDURE)
+        proc_name = self.current_token.value
+        self.consume(ID)
+        self.consume(SEMI)
+        proc_body = self.block()
+        self.consume(SEMI)
+        return ProcedureDeclaration(proc_name, proc_body)
 
     def variable_declaration(self):
         """
