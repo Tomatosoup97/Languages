@@ -21,9 +21,23 @@ class BuiltinTypeSymbol(Symbol):
     def __str__(self):
         return self.name
 
+    def __repr__(self):
+        return "<{class_name}(name='{name}')>".format(
+            class_name=self.__class__.__name__,
+            name=self.name,
+        )
+
 
 class VarSymbol(Symbol):
-    pass
+    def __init__(self, name, type):
+        super(VarSymbol, self).__init__(name, type)
+
+    def __str__(self):
+        return "<{class_name}(name='{name}', type='{type}')>".format(
+            class_name=self.__class__.__name__,
+            name=self.name,
+            type=self.type,
+        )
 
 
 class SymbolTable(object):
@@ -111,6 +125,13 @@ class SymbolTableBuilder(NodeVisitor):
         type_symbol = self.symtab.lookup(type_name)
         var_name = node.var.value
         var_symbol = VarSymbol(var_name, type_symbol)
+
+        if self.symtab.lookup(var_name) is None:
+            # TODO: improve verbosity of exceptions
+            raise NameError(
+                "{} declared more than once!".format(repr(var_name))
+            )
+
         self.symtab.define(var_symbol)
 
     def visit_Type(self, node):
