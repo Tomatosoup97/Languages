@@ -24,3 +24,9 @@ var/
 *.egg
 .cache
 cache
+
+# Ocaml
+_build
+*.native
+*.byte
+
