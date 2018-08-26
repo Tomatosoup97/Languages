@@ -4,11 +4,11 @@ module Lang = Zoo.Main(struct
 
     type command = Syntax.t
 
-    type environment = unit
+    type environment = (string * int) list
 
     let options = []
 
-    let initial_environment = ()
+    let initial_environment = []
 
     let read_more _ = false
 
@@ -16,9 +16,10 @@ module Lang = Zoo.Main(struct
 
     let toplevel_parser = Some (Parser.toplevel Lexer.lex)
 
-    let exec () e =
-        let n = Interpreter.eval e in
-        Zoo.print_info "%d@." n
+    let exec env e =
+        let n = Interpreter.eval env e in
+        Zoo.print_info "%d@." n;
+        env
 
 end) ;;
 

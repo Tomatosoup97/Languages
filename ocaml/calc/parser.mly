@@ -1,15 +1,19 @@
 %{
 %}
 
-%token <int> Int
-%token <float> Float
-%token <bool> Bool
+%token <int> INT
+%token <float> FLOAT
+%token <string> VAR
+%token <bool> BOOL
+%token EQUAL
 %token PLUS
 %token MINUS
 %token MULT
 %token DIV
 %token LPAREN
 %token RPAREN
+%token LET
+%token IN
 %token EOF
 
 %start toplevel
@@ -17,14 +21,24 @@
 
 %%
 
-toplevel: e = expr EOF
+toplevel: e = statement EOF
     { e }
+;
+
+statement:
+    | e = assignment  { e }
+    | e = expr { e }
+;
+
+assignment:
+    | LET x = VAR EQUAL var_expr = expr IN e = statement
+    { Syntax.Let (x, var_expr, e) }
 ;
 
 expr:
     | e1 = term PLUS e2 = expr  { Syntax.Add (e1, e2) }
     | e1 = term MINUS e2 = expr { Syntax.Sub (e1, e2) }
-    | e = term                  { e }
+    | e = term                         { e }
 ;
 
 term:
@@ -34,8 +48,10 @@ term:
 ;
 
 factor:
-    | n = Int                     { Syntax.Int n }
-    | n = Float                   { Syntax.Float n }
+    | n = INT                     { Syntax.Int n }
+    | n = FLOAT                   { Syntax.Float n }
+    | x = VAR                     { Syntax.Var x }
     | MINUS f = factor            { Syntax.Neg f }
     | LPAREN e = expr RPAREN      { e }
 ;
+
