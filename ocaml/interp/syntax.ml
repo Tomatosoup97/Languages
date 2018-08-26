@@ -1,4 +1,12 @@
 
+type rel_op =
+    | Eq
+    | Ne
+    | Lt
+    | Lte
+    | Gt
+    | Gte
+
 type expr =
     | Int of int
     | Float of float
@@ -11,7 +19,7 @@ type expr =
     | Div of expr * expr
     | Let of string * expr * expr
     | If of expr * expr * expr
-
+    | RelOp of rel_op * expr * expr
 
 type itype =
     | TInt of int

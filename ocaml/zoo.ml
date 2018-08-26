@@ -1,4 +1,4 @@
-(* This file contains all the common code used by the languages implemented in the PL Zoo. *)
+(* This file contains all the common code used by the languages *)
 
 type location =
   | Location of Lexing.position * Lexing.position (** delimited location *)

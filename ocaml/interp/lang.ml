@@ -1,6 +1,6 @@
 
 module Lang = Zoo.Main(struct
-    let name = "lang"
+    let name = "interp"
 
     type command = Syntax.expr
 

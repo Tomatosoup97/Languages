@@ -42,6 +42,17 @@ let rec eval env = function
         let to_eval = if cond_val then t_e else f_e in
         eval env to_eval
 
+    | Syntax.RelOp (op, e1, e2) ->
+        let (VInt x1) = eval env e1 in
+        let (VInt x2) = eval env e2 in
+        match op with
+            | Eq -> VBool (x1 == x2)
+            | Ne -> VBool (x1 != x2)
+            | Lt -> VBool (x1 < x2)
+            | Lte -> VBool (x1 <= x2)
+            | Gt -> VBool (x1 > x2)
+            | Gte -> VBool (x1 >= x2)
+
 let string_of_result = function
     | VInt n -> string_of_int n
     | VFloat n -> string_of_float n

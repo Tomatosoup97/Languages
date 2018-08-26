@@ -7,7 +7,7 @@ BUILD=native
 all: lang
 
 lang:
-	$(OCAMLBUILD) -use-menhir -menhir "menhir --explain" -libs unix -I . calc/$@.$(BUILD)
+	$(OCAMLBUILD) -use-menhir -menhir "menhir --explain" -libs unix -I . interp/$@.$(BUILD)
 
 clean:
 	$(OCAMLBUILD) -clean

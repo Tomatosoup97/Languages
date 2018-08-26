@@ -12,14 +12,21 @@ rule lex = parse
     | space+ { lex lexbuf }
     | digit+ { INT (int_of_string (Lexing.lexeme lexbuf)) }
     | digit+ ('.' digit*)? { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
-    | '='         { EQUAL }
+    | '='         { ASSIGN }
     | '+'         { PLUS }
     | '-'         { MINUS }
     | '*'         { MULT }
     | '/'         { DIV }
     | '('         { LPAREN }
     | ')'         { RPAREN }
+    | "=="         { EQUAL }
+    | "!="        { NEQUAL }
+    | '<'         { LT }
+    | "<="        { LTE }
+    | '>'         { GT }
+    | ">="        { GTE }
     | eof         { EOF }
+    | "not"       { NOT }
     | "true"      { BOOL (true) }
     | "false"     { BOOL (false) }
     | "let"       { LET }

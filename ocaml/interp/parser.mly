@@ -5,11 +5,11 @@
 %token <float> FLOAT
 %token <string> VAR
 %token <bool> BOOL
-%token EQUAL
 %token PLUS
 %token MINUS
 %token MULT
 %token DIV
+%token ASSIGN
 %token LPAREN
 %token RPAREN
 %token LET
@@ -17,6 +17,13 @@
 %token IF
 %token THEN
 %token ELSE
+%token NOT
+%token EQUAL
+%token NEQUAL
+%token LT
+%token LTE
+%token GT
+%token GTE
 %token EOF
 
 %start toplevel
@@ -35,19 +42,33 @@ statement:
 ;
 
 assignment:
-    | LET x = VAR EQUAL var_expr = expr IN e = statement
-    { Syntax.Let (x, var_expr, e) }
+    | LET x = VAR ASSIGN var_expr = expr IN e = statement
+        { Syntax.Let (x, var_expr, e) }
 ;
 
 conditional:
     | IF cond = expr THEN t_e = expr ELSE f_e = expr
-    { Syntax.If (cond, t_e, f_e) }
+        { Syntax.If (cond, t_e, f_e) }
 ;
 
 expr:
-    | e1 = term PLUS e2 = expr      { Syntax.Add (e1, e2) }
-    | e1 = term MINUS e2 = expr     { Syntax.Sub (e1, e2) }
-    | e = term                      { e }
+    | e1 = simple_expr op = rel_op e2 = simple_expr { Syntax.RelOp (op, e1, e2) }
+    | e = simple_expr                               { e }
+;
+
+rel_op:
+    | EQUAL     { Syntax.Eq }
+    | NEQUAL    { Syntax.Ne }
+    | LT        { Syntax.Lt }
+    | LTE       { Syntax.Lte }
+    | GT        { Syntax.Gt }
+    | GTE       { Syntax.Gte }
+;
+
+simple_expr:
+    | e1 = term PLUS e2 = simple_expr       { Syntax.Add (e1, e2) }
+    | e1 = term MINUS e2 = simple_expr      { Syntax.Sub (e1, e2) }
+    | e = term                              { e }
 ;
 
 term:
