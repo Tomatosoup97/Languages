@@ -24,5 +24,8 @@ rule lex = parse
     | "false"     { BOOL (false) }
     | "let"       { LET }
     | "in"        { IN }
+    | "if"        { IF }
+    | "then"      { THEN }
+    | "else"      { ELSE }
     | is_char+ (is_char|digit)* { VAR (Lexing.lexeme lexbuf) }
 
