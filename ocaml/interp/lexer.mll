@@ -19,7 +19,8 @@ rule lex = parse
     | '/'         { DIV }
     | '('         { LPAREN }
     | ')'         { RPAREN }
-    | "=="         { EQUAL }
+    | ','         { COMMA }
+    | "=="        { EQUAL }
     | "!="        { NEQUAL }
     | '<'         { LT }
     | "<="        { LTE }

@@ -26,6 +26,7 @@
 %token GTE
 %token ARROW
 %token BSLASH
+%token COMMA
 %token EOF
 
 %start toplevel
@@ -86,7 +87,12 @@ factor:
     | n = FLOAT                     { Syntax.Float n }
     | b = BOOL                      { Syntax.Bool b }
     | x = VAR                       { Syntax.Var x }
+    | p = pair                      { p }
     | MINUS f = factor              { Syntax.Neg f }
     | LPAREN e = expr RPAREN        { e }
+;
+
+pair:
+    LPAREN e1 = factor COMMA e2 = factor RPAREN   { Syntax.Pair (e1, e2) }
 ;
 

@@ -22,9 +22,7 @@ type expr =
     | RelOp of rel_op_t * expr * expr
     | Lambda of string * expr
     | App of string * expr
-
-type func_t =
-    | FuncRecord of (expr -> expr)
+    | Pair of expr * expr
 
 type itype =
     | TInt of int

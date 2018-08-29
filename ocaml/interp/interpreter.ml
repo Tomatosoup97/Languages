@@ -1,14 +1,15 @@
 
 let extend_env env var value = (var, value) :: env
 
-
-
 type value =
     | VInt of int
     | VFloat of float
     | VBool of bool
     | VLambda of environment * func_t
+    | VPair of value * value
+
 and environment = (string * value) list
+
 and func_t = value -> value
 
 let rec eval env = function
@@ -42,6 +43,7 @@ let rec eval env = function
              List.assoc x env
          with
              | Not_found -> Zoo.error "unknown variable %s" x)
+    | Syntax.Pair (e1, e2) -> VPair (eval env e1, eval env e2)
     | Syntax.If (cond, t_e, f_e) ->
         let (VBool cond_val) = eval env cond in
         let to_eval = if cond_val then t_e else f_e in
