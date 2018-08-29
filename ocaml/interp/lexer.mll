@@ -34,5 +34,7 @@ rule lex = parse
     | "if"        { IF }
     | "then"      { THEN }
     | "else"      { ELSE }
+    | "->"        { ARROW }
+    | "\\"        { BSLASH }
     | is_char+ (is_char|digit)* { VAR (Lexing.lexeme lexbuf) }
 

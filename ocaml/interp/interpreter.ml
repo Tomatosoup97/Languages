@@ -1,10 +1,15 @@
 
 let extend_env env var value = (var, value) :: env
 
+
+
 type value =
     | VInt of int
     | VFloat of float
     | VBool of bool
+    | VLambda of environment * func_t
+and environment = (string * value) list
+and func_t = value -> value
 
 let rec eval env = function
     | Syntax.Int n -> VInt n
@@ -41,17 +46,28 @@ let rec eval env = function
         let (VBool cond_val) = eval env cond in
         let to_eval = if cond_val then t_e else f_e in
         eval env to_eval
-
     | Syntax.RelOp (op, e1, e2) ->
         let (VInt x1) = eval env e1 in
         let (VInt x2) = eval env e2 in
-        match op with
-            | Eq -> VBool (x1 == x2)
-            | Ne -> VBool (x1 != x2)
-            | Lt -> VBool (x1 < x2)
-            | Lte -> VBool (x1 <= x2)
-            | Gt -> VBool (x1 > x2)
-            | Gte -> VBool (x1 >= x2)
+            (match op with
+                | Eq -> VBool (x1 == x2)
+                | Ne -> VBool (x1 != x2)
+                | Lt -> VBool (x1 < x2)
+                | Lte -> VBool (x1 <= x2)
+                | Gt -> VBool (x1 > x2)
+                | Gte -> VBool (x1 >= x2))
+    | Syntax.Lambda (var, body) ->
+        let func = fun arg -> let env' = extend_env env var arg in eval env' body in
+        VLambda (env, func)
+    | Syntax.App (var, arg_e) ->
+        (try
+            let f = List.assoc var env in
+                match f with
+                    | VLambda (env', f_e) -> let arg_v = eval env arg_e in f_e (arg_v)
+                    | _ -> Zoo.error "%s is not a function" var
+         with
+             | Not_found -> Zoo.error "unknown function %s" var)
+
 
 let string_of_result = function
     | VInt n -> string_of_int n

@@ -4,7 +4,7 @@ module Lang = Zoo.Main(struct
 
     type command = Syntax.expr
 
-    type environment = (string * Interpreter.value) list
+    type environment = Interpreter.environment
 
     let options = []
 

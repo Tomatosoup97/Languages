@@ -1,5 +1,5 @@
 
-type rel_op =
+type rel_op_t =
     | Eq
     | Ne
     | Lt
@@ -19,7 +19,12 @@ type expr =
     | Div of expr * expr
     | Let of string * expr * expr
     | If of expr * expr * expr
-    | RelOp of rel_op * expr * expr
+    | RelOp of rel_op_t * expr * expr
+    | Lambda of string * expr
+    | App of string * expr
+
+type func_t =
+    | FuncRecord of (expr -> expr)
 
 type itype =
     | TInt of int
