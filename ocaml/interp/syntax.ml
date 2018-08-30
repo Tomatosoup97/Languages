@@ -22,13 +22,14 @@ type expr =
     | RelOp of rel_op_t * expr * expr
     | Lambda of string * expr
     | App of string * expr
+    | Fst of expr
+    | Snd of expr
     | Pair of expr * expr
 
 type itype =
     | TInt of int
     | TFloat of float
     | TBool of bool
-
 
 let string_of_expr = function
     | Int n -> string_of_int n

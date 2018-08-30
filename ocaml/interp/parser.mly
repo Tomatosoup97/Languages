@@ -27,6 +27,8 @@
 %token ARROW
 %token BSLASH
 %token COMMA
+%token FST
+%token SND
 %token EOF
 
 %start toplevel
@@ -57,6 +59,8 @@ conditional:
 expr:
     | e1 = simple_expr op = rel_op e2 = simple_expr { Syntax.RelOp (op, e1, e2) }
     | BSLASH x = VAR ARROW body = expr              { Syntax.Lambda (x, body) }
+    | FST LPAREN p = expr RPAREN                    { Syntax.Fst (p) }
+    | SND LPAREN p = expr RPAREN                    { Syntax.Snd (p) }
     | x = VAR LPAREN arg = expr RPAREN              { Syntax.App (x, arg) }
     | e = simple_expr                               { e }
 ;

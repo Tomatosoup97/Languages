@@ -44,6 +44,10 @@ let rec eval env = function
          with
              | Not_found -> Zoo.error "unknown variable %s" x)
     | Syntax.Pair (e1, e2) -> VPair (eval env e1, eval env e2)
+    | Syntax.Fst e -> let p = eval env e in (match p with
+        | VPair (e, _) -> e)
+    | Syntax.Snd e -> let p = eval env e in (match p with
+        | VPair (_, e) -> e)
     | Syntax.If (cond, t_e, f_e) ->
         let (VBool cond_val) = eval env cond in
         let to_eval = if cond_val then t_e else f_e in
@@ -71,9 +75,10 @@ let rec eval env = function
              | Not_found -> Zoo.error "unknown function %s" var)
 
 
-let string_of_result = function
+let rec string_of_result = function
     | VInt n -> string_of_int n
     | VFloat n -> string_of_float n
     | VBool b -> string_of_bool b
+    | VPair (p1, p2) -> "(" ^ (string_of_result p1) ^ "," ^ (string_of_result p2) ^ ")"
     | _ -> "could not cast result to string"
 
